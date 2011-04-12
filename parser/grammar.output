@@ -1,0 +1,170 @@
+Terminais não utilizados na gramática
+
+   TOK_SPEC
+   TOK_VAR
+   TOK_ASSIGN
+   TOK_SEMI
+   TOK_RCB
+   TOK_LCB
+   TOK_RB
+   TOK_RP
+   TOK_LP
+   TOK_TWODOTS
+   TOK_EQDEF
+   TOK_COLON
+   TOK_ESAC
+   TOK_CASE
+   TOK_INTEGER
+   TOK_BOOLEAN
+   TOK_TRUEEXP
+   TOK_FALSEEXP
+   TOK_NUMBER
+   TOK_NOT
+   TOK_AND
+   TOK_XNOR
+   TOK_XOR
+   TOK_OR
+   TOK_IFF
+   TOK_IMPLIES
+   TOK_COMMA
+   TOK_AA
+   TOK_EE
+   TOK_AG
+   TOK_EG
+   TOK_AF
+   TOK_EF
+   TOK_AX
+   TOK_EX
+   TOK_UNTIL
+   TOK_OP_FUTURE
+   TOK_OP_GLOBAL
+   TOK_OP_NEXT
+   TOK_GE
+   TOK_LE
+   TOK_GT
+   TOK_LT
+   TOK_NOTEQUAL
+   TOK_EQUAL
+   TOK_RSHIFT
+   TOK_LSHIFT
+   TOK_DIVIDE
+   TOK_TIMES
+   TOK_MINUS
+   TOK_PLUS
+   TOK_MOD
+   TOK_SMALLINIT
+   TOK_NEXT
+   TOK_LB
+   TOK_UNKNOWN
+   TOK_NAME
+   TOK_ATOM
+
+
+Gramática
+
+    0 $accept: module $end
+
+    1 module: TOK_MODULE
+
+
+Terminais, com as regras onde eles aparecem
+
+$end (0) 0
+error (256)
+TOK_MODULE (258) 1
+TOK_SPEC (259)
+TOK_VAR (260)
+TOK_ASSIGN (261)
+TOK_SEMI (262)
+TOK_RCB (263)
+TOK_LCB (264)
+TOK_RB (265)
+TOK_RP (266)
+TOK_LP (267)
+TOK_TWODOTS (268)
+TOK_EQDEF (269)
+TOK_COLON (270)
+TOK_ESAC (271)
+TOK_CASE (272)
+TOK_INTEGER (273)
+TOK_BOOLEAN (274)
+TOK_TRUEEXP (275)
+TOK_FALSEEXP (276)
+TOK_NUMBER (277)
+TOK_NOT (278)
+TOK_AND (279)
+TOK_XNOR (280)
+TOK_XOR (281)
+TOK_OR (282)
+TOK_IFF (283)
+TOK_IMPLIES (284)
+TOK_COMMA (285)
+TOK_AA (286)
+TOK_EE (287)
+TOK_AG (288)
+TOK_EG (289)
+TOK_AF (290)
+TOK_EF (291)
+TOK_AX (292)
+TOK_EX (293)
+TOK_UNTIL (294)
+TOK_OP_FUTURE (295)
+TOK_OP_GLOBAL (296)
+TOK_OP_NEXT (297)
+TOK_GE (298)
+TOK_LE (299)
+TOK_GT (300)
+TOK_LT (301)
+TOK_NOTEQUAL (302)
+TOK_EQUAL (303)
+TOK_RSHIFT (304)
+TOK_LSHIFT (305)
+TOK_DIVIDE (306)
+TOK_TIMES (307)
+TOK_MINUS (308)
+TOK_PLUS (309)
+TOK_MOD (310)
+TOK_SMALLINIT (311)
+TOK_NEXT (312)
+TOK_LB (313)
+TOK_UNKNOWN (314)
+TOK_NAME (315)
+TOK_ATOM (316)
+
+
+Não-terminais com as regras onde eles aparecem
+
+$accept (62)
+    à esquerda: 0
+module (63)
+    à esquerda: 1, à direita: 0
+
+
+estado 0
+
+    0 $accept: . module $end
+
+    TOK_MODULE  deslocar, e ir ao estado 1
+
+    module  ir ao estado 2
+
+
+estado 1
+
+    1 module: TOK_MODULE .
+
+    $padrão  reduzir usando a regra 1 (module)
+
+
+estado 2
+
+    0 $accept: module . $end
+
+    $end  deslocar, e ir ao estado 3
+
+
+estado 3
+
+    0 $accept: module $end .
+
+    $padrão  aceitar
