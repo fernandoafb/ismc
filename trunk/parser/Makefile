@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -Werror -LFence
+CFLAGS = -Wall -LFence #-Werror
 DEBUG = -g
 LFLAGS = -Wall -o
 SRC = $(wildcard *.c)

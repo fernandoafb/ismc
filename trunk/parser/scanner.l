@@ -167,6 +167,7 @@
                   //yylval.node = new_node(ATOM, (node_ptr)find_string(yytext),Nil);
                   return(TOK_ATOM);
                  }
+                 
 
 %%
 /* ----------------------------user code-------------------------------------- */
