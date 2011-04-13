@@ -1,0 +1,19 @@
+First, you must compile the BuDDy library.
+
+1) cd buddy-2.4
+2) ./configure
+3) make
+4) make install
+
+To compile the test_case.cpp:
+
+1) g++ -I/usr/local/include test_case.cpp -o test_case -L/usr/local/lib -lbdd
+
+To run the test_case:
+
+1) ./test_case > graph.dot
+
+To generate the graph with GraphViz:
+
+1) dot -Tpng graph.dot -o graph.png
+
