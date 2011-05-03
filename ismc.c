@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "parser/parser.h"
+#include "parser/grammar.h"
 
 // prototype of bison-generated parser function
 int yyparse();
