@@ -1,7 +1,7 @@
 %{
 //---------------------------------------Prologue
 #include "scanner.h"
-#include "parser.h"
+#include "grammar.h"
 
 void yyerror(char *s);
 
