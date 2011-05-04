@@ -73,14 +73,14 @@ void yyerror(char *s);
 %%
 //---------------------------------------Grammar rules
 number        : TOK_NUMBER { printf("action: number"); }
-              | TOK_PLUS TOK_NUMBER { printf("action: number"); }
+              | TOK_PLUS TOK_NUMBER { /* $$ = $2; */ }
               ;
 
 integer       : TOK_NUMBER { printf("action: integer"); }
-              | TOK_PLUS TOK_NUMBER { printf("action: integer"); }
+              | TOK_PLUS TOK_NUMBER { /* $$ = $2; */ }
               ;
 
-subrange      : integer TOK_TWODOTS integer { printf("action: subrange"); }
+subrange      : integer TOK_TWODOTS integer { printf("subrange"); }
               ;
 
 subrangetype  : shift_expr TOK_TWODOTS shift_expr { printf("action: subrangetype"); }
@@ -95,15 +95,15 @@ primary_expr :
                constant { printf("action: primary_expr"); }
              | TOK_MINUS primary_expr { printf("action: primary_expr");  }
              | TOK_ATOM { printf("action: primary_expr");  }
-             | TOK_LP basic_expr TOK_RP { printf("action: primary_expr");  }
+             | TOK_LP basic_expr TOK_RP { /* $$ = $2; */  }
              | TOK_NOT primary_expr { printf("action: primary_expr");  }
              | TOK_NEXT  TOK_LP basic_expr TOK_RP { printf("action: primary_expr");  }
-             | TOK_CASE case_element_list_expr TOK_ESAC { printf("action: primary_expr");  }
+             | TOK_CASE case_element_list_expr TOK_ESAC { /* $$ = $2; */  }
              ;
 
 case_element_list_expr
-             : case_element_expr  { printf("action: case_element_list_expr");  }
-             | case_element_expr case_element_list_expr { printf("action: case_element_list_expr");  }
+             : case_element_expr  { /* $$ = new_node(CASE, $1, failure_make("case conditions are not exhaustive", FAILURE_CASE_NOT_EXHAUSTIVE, yylineno)); */ }
+             | case_element_expr case_element_list_expr { /* $$ = new_node(CASE, $1, $2); */  }
              ;
 
 case_element_expr
@@ -132,7 +132,7 @@ shift_expr :   additive_expr { printf("action: shift_expr");  }
 
 set_expr     : shift_expr { printf("action: set_expr");  }
              | subrange { printf("action: set_expr");  }
-             | TOK_LCB set_list_expr TOK_RCB { printf("action: set_expr");  }
+             | TOK_LCB set_list_expr TOK_RCB { /* $$ = $2; */  }
              ;
 
 set_list_expr: basic_expr { printf("action: set_list_expr");  }
@@ -201,13 +201,11 @@ iff_expr :
              | iff_expr TOK_IFF or_expr { printf("action: iff_expr");  }   
              ;
 
-implies_expr : 
-               iff_expr { printf("action: implies_expr");  }
+implies_expr : iff_expr { printf("action: implies_expr");  }
              | iff_expr TOK_IMPLIES implies_expr { printf("action: implies_expr");  } 
              ;
 
-basic_expr :
-             implies_expr { printf("action: basic_expr");  }
+basic_expr : implies_expr { printf("action: basic_expr");  }
            ;
 
 simple_expression : basic_expr { printf("action: simple_expression");  }  
@@ -219,7 +217,7 @@ next_expression   : basic_expr { printf("action: next_expression");  }
 ctl_expression    : basic_expr { printf("action: ctl_expression");  }  
                   ;
 
-itype         : TOK_BOOLEAN { printf("action: itype");  } 
+itype         : TOK_BOOLEAN { /* $$ = new_node(BOOLEAN, Nil, Nil); */  } 
               | subrangetype { printf("action: itype");  }
               | TOK_LCB type_value_list TOK_RCB { printf("action: itype");  }
               ;
@@ -237,7 +235,7 @@ type_value    : TOK_ATOM { printf("action: type_value");  }
 module       : TOK_MODULE TOK_ATOM declarations { printf("action: module");  }
              ;
 
-declarations : { printf("action: declarations");  }
+declarations : { /* $$ = Nil; */  }
              | declarations declaration { printf("action: declarations");  } 
              ;
 			 
@@ -260,23 +258,24 @@ var_decl      : decl_var_id TOK_COLON itype TOK_SEMI { printf("action: var_decl"
 assign        : TOK_ASSIGN assign_list { printf("action: assign");  } 
               ;
 			  
-assign_list   : { printf("action: assign_list");  } /*{$$ = Nil;}*/
-              | assign_list one_assign { printf("action: assign_list");  }
+assign_list   : { /* $$ = Nil; */  }
+              | assign_list one_assign { /* $$ = new_node(AND, $1, $2); */  }
               ;
 			  
-one_assign   : var_id TOK_EQDEF simple_expression TOK_SEMI { printf("action: one_assign");  }
+one_assign    : var_id TOK_EQDEF simple_expression TOK_SEMI { printf("action: one_assign");  }
               | TOK_SMALLINIT TOK_LP var_id TOK_RP TOK_EQDEF simple_expression TOK_SEMI { printf("action: one_assign");  }
               | TOK_NEXT TOK_LP var_id TOK_RP TOK_EQDEF next_expression TOK_SEMI { printf("action: one_assign");  }
               ;
 
-_ctlspec      : ctl_expression optsemi { printf("action: _ctlspec");  }
-;
+_ctlspec      : ctl_expression optsemi { /* $$ = $1; */  }
+              ;
 
 ctlspec       : TOK_SPEC _ctlspec { printf("action: ctlspec");  }
               | TOK_SPEC TOK_NAME var_id TOK_EQDEF  _ctlspec { printf("action: ctlspec");  }
-;
+              ;
 
-optsemi      : | TOK_SEMI { printf("action: optsemi"); };
+optsemi       : | TOK_SEMI {}
+              ;
 
 decl_var_id   : TOK_ATOM { printf("action: decl_var_id");  }
               ;
