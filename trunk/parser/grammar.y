@@ -72,32 +72,32 @@ void yyerror(char *s);
 //---------------------------------------end Bison declarations     
 %%
 //---------------------------------------Grammar rules
-number        : TOK_NUMBER { printf("action: number"); }
+number        : TOK_NUMBER
               | TOK_PLUS TOK_NUMBER { /* $$ = $2; */ }
               ;
 
-integer       : TOK_NUMBER { printf("action: integer"); }
+integer       : TOK_NUMBER
               | TOK_PLUS TOK_NUMBER { /* $$ = $2; */ }
               ;
 
-subrange      : integer TOK_TWODOTS integer { printf("subrange"); }
+subrange      : integer TOK_TWODOTS integer { /* {$$ = new_node(TWODOTS, $1, $3); */ }
               ;
 
-subrangetype  : shift_expr TOK_TWODOTS shift_expr { printf("action: subrangetype"); }
+subrangetype  : shift_expr TOK_TWODOTS shift_expr { /* {$$ = new_node(TWODOTS, $1, $3); */ }
               ;
 
-constant     : TOK_FALSEEXP { printf("action: constant"); }
-             | TOK_TRUEEXP { printf("action: constant"); }
-             | number { printf("action: constant"); }
+constant     : TOK_FALSEEXP
+             | TOK_TRUEEXP
+             | number
              ;
 
 primary_expr :
-               constant { printf("action: primary_expr"); }
-             | TOK_MINUS primary_expr { printf("action: primary_expr");  }
-             | TOK_ATOM { printf("action: primary_expr");  }
+               constant
+             | TOK_MINUS primary_expr { /* $$ = new_node(UMINUS, $2, Nil); */  }
+             | TOK_ATOM
              | TOK_LP basic_expr TOK_RP { /* $$ = $2; */  }
-             | TOK_NOT primary_expr { printf("action: primary_expr");  }
-             | TOK_NEXT  TOK_LP basic_expr TOK_RP { printf("action: primary_expr");  }
+             | TOK_NOT primary_expr { /* $$ = new_node(NOT, $2, Nil); */  }
+             | TOK_NEXT  TOK_LP basic_expr TOK_RP { /* $$ = new_node(NEXT, $3, Nil); */  }
              | TOK_CASE case_element_list_expr TOK_ESAC { /* $$ = $2; */  }
              ;
 
@@ -107,180 +107,182 @@ case_element_list_expr
              ;
 
 case_element_expr
-             : basic_expr TOK_COLON basic_expr TOK_SEMI { printf("action: case_element_expr"); }
+             : basic_expr TOK_COLON basic_expr TOK_SEMI { /* $$ = build_case_colon_node($1, $3, $2); */ }
              ;
 
 /* concatenation_expr foi substituida por primary_expr */
 
 multiplicative_expr :
-               primary_expr { printf("action: multiplicative_expr");  }
-             | multiplicative_expr TOK_TIMES primary_expr  { printf("action: multiplicative_expr");  }
-             | multiplicative_expr TOK_DIVIDE primary_expr { printf("action: multiplicative_expr");  }
-             | multiplicative_expr TOK_MOD primary_expr  { printf("action: multiplicative_expr");  }
+               primary_expr
+             | multiplicative_expr TOK_TIMES primary_expr  { /* $$ = new_node(TIMES, $1, $3); */ }
+             | multiplicative_expr TOK_DIVIDE primary_expr { /* $$ = new_node(DIVIDE, $1, $3); */ }
+             | multiplicative_expr TOK_MOD primary_expr  { /* $$ = new_node(MOD, $1, $3); */  }
              ;
 
 additive_expr :
-               multiplicative_expr { printf("action: additive_expr");  }
-             | additive_expr TOK_PLUS multiplicative_expr { printf("action: additive_expr");  }
-             | additive_expr TOK_MINUS multiplicative_expr { printf("action: additive_expr");  }
+               multiplicative_expr
+             | additive_expr TOK_PLUS multiplicative_expr { /* $$ = new_node(PLUS, $1, $3); */  }
+             | additive_expr TOK_MINUS multiplicative_expr { /* $$ = new_node(MINUS, $1, $3); */  }
              ;
 
-shift_expr :   additive_expr { printf("action: shift_expr");  }
-             | shift_expr TOK_LSHIFT additive_expr { printf("action: shift_expr");  }
-             | shift_expr TOK_RSHIFT additive_expr { printf("action: shift_expr");  }
+shift_expr :   additive_expr
+             | shift_expr TOK_LSHIFT additive_expr { /* $$ = new_node(LSHIFT, $1, $3); */  }
+             | shift_expr TOK_RSHIFT additive_expr { /* $$ = new_node(RSHIFT, $1, $3); */  }
              ;
 
-set_expr     : shift_expr { printf("action: set_expr");  }
-             | subrange { printf("action: set_expr");  }
+set_expr     : shift_expr
+             | subrange
              | TOK_LCB set_list_expr TOK_RCB { /* $$ = $2; */  }
              ;
 
-set_list_expr: basic_expr { printf("action: set_list_expr");  }
-             | set_list_expr TOK_COMMA basic_expr { printf("action: set_list_expr");  }
+set_list_expr: basic_expr
+             | set_list_expr TOK_COMMA basic_expr { /* $$ = new_node(UNION, $1, $3); */ }
              ;
 
 relational_expr :
-               set_expr { printf("action: relational_expr");  }
-             | relational_expr TOK_EQUAL set_expr { printf("action: relational_expr");  }
-             | relational_expr TOK_NOTEQUAL set_expr { printf("action: relational_expr");  }
-             | relational_expr TOK_LT set_expr  { printf("action: relational_expr");  }
-             | relational_expr TOK_GT set_expr  { printf("action: relational_expr");  }
-             | relational_expr TOK_LE set_expr  { printf("action: relational_expr");  }
-             | relational_expr TOK_GE set_expr  { printf("action: relational_expr");  }
+               set_expr
+             | relational_expr TOK_EQUAL set_expr { /* $$ = new_node(EQUAL, $1, $3); */ }
+             | relational_expr TOK_NOTEQUAL set_expr { /* $$ = new_node(NOTEQUAL, $1, $3); */  }
+             | relational_expr TOK_LT set_expr  { /* $$ = new_node(LT, $1, $3); */ }
+             | relational_expr TOK_GT set_expr  { /* $$ = new_node(GT, $1, $3); */ }
+             | relational_expr TOK_LE set_expr  { /* $$ = new_node(LE, $1, $3); */ }
+             | relational_expr TOK_GE set_expr  { /* $$ = new_node(GE, $1, $3); */ }
              ;
 
-ctl_expr     : relational_expr { printf("action: ctl_expr");  }
-             | pure_ctl_expr  { printf("action: ctl_expr");  }
+ctl_expr     : relational_expr
+             | pure_ctl_expr
              ;
-			 
+   
 pure_ctl_expr
-             : TOK_EX ctl_expr { printf("action: pure_ctl_expr");  }     
-             | TOK_AX ctl_expr { printf("action: pure_ctl_expr");  }    
-             | TOK_EF ctl_expr { printf("action: pure_ctl_expr");  }   
-             | TOK_AF ctl_expr { printf("action: pure_ctl_expr");  }   
-             | TOK_EG ctl_expr { printf("action: pure_ctl_expr");  }   
-             | TOK_AG ctl_expr { printf("action: pure_ctl_expr");  }   
-             | TOK_AA TOK_LB ctl_implies_expr TOK_UNTIL ctl_implies_expr TOK_RB { printf("action: pure_ctl_expr");  }   
-             | TOK_EE TOK_LB ctl_implies_expr TOK_UNTIL ctl_implies_expr TOK_RB { printf("action: pure_ctl_expr");  }
-             | TOK_NOT pure_ctl_expr { printf("action: pure_ctl_expr");  }
+             : TOK_EX ctl_expr { /* $$ = new_node(EX, $2, Nil); */ }     
+             | TOK_AX ctl_expr { /* $$ = new_node(AX, $2, Nil); */ }    
+             | TOK_EF ctl_expr { /* $$ = new_node(EF, $2, Nil); */ }   
+             | TOK_AF ctl_expr { /* $$ = new_node(AF, $2, Nil); */ }   
+             | TOK_EG ctl_expr { /* $$ = new_node(EG, $2, Nil); */ }   
+             | TOK_AG ctl_expr { /* $$ = new_node(AG, $2, Nil); */ }   
+             | TOK_AA TOK_LB ctl_implies_expr TOK_UNTIL ctl_implies_expr TOK_RB { /* $$ = new_node(AU, $3, $5); */ }   
+             | TOK_EE TOK_LB ctl_implies_expr TOK_UNTIL ctl_implies_expr TOK_RB { /* $$ = new_node(EU, $3, $5); */ }
+             | TOK_NOT pure_ctl_expr { /* $$ = new_node(NOT, $2, Nil); */ }
              ;
-			 
+   
 ctl_and_expr :
-               ctl_expr { printf("action: ctl_and_expr");  }
-             | ctl_and_expr TOK_AND ctl_expr { printf("action: ctl_and_expr");  } 
+               ctl_expr
+             | ctl_and_expr TOK_AND ctl_expr { /* $$ = new_node(AND, $1, $3); */ }
              ;
 ctl_or_expr :
-               ctl_and_expr { printf("action: ctl_or_expr");  }
-             | ctl_or_expr TOK_OR ctl_and_expr { printf("action: ctl_or_expr");  }    
-             | ctl_or_expr TOK_XOR ctl_and_expr { printf("action: ctl_or_expr");  }   
-             | ctl_or_expr TOK_XNOR ctl_and_expr { printf("action: ctl_or_expr");  }  
+               ctl_and_expr
+             | ctl_or_expr TOK_OR ctl_and_expr { /* $$ = new_node(OR, $1, $3); */ }    
+             | ctl_or_expr TOK_XOR ctl_and_expr { /* $$ = new_node(XOR, $1, $3); */  }   
+             | ctl_or_expr TOK_XNOR ctl_and_expr { /* $$ = new_node(XNOR,$1, $3); */ }  
              ;
 ctl_iff_expr :
-               ctl_or_expr { printf("action: ctl_iff_expr");  }
-             | ctl_iff_expr TOK_IFF ctl_or_expr { printf("action: ctl_iff_expr");  }   
+               ctl_or_expr
+             | ctl_iff_expr TOK_IFF ctl_or_expr { /* $$ = new_node(IFF, $1, $3); */ }   
              ;
 
-ctl_implies_expr : 
-               ctl_iff_expr { printf("action: ctl_implies_expr");  }
-             | ctl_iff_expr TOK_IMPLIES ctl_implies_expr { printf("action: ctl_implies_expr");  } 
+ctl_implies_expr :
+               ctl_iff_expr
+             | ctl_iff_expr TOK_IMPLIES ctl_implies_expr { /* $$ = new_node(IMPLIES, $1, $3); */ }
              ;
 
-and_expr :     ctl_expr { printf("action: and_expr");  }
-             | and_expr TOK_AND ctl_expr { printf("action: and_expr");  }  
+and_expr :     ctl_expr
+             | and_expr TOK_AND ctl_expr { /* $$ = new_node(AND, $1, $3); */ }  
              ;
 
 or_expr :
-               and_expr { printf("action: or_expr");  }
-             | or_expr TOK_OR and_expr { printf("action: or_expr");  }    
-             | or_expr TOK_XOR and_expr { printf("action: or_expr");  }   
-             | or_expr TOK_XNOR and_expr { printf("action: or_expr");  }  
+               and_expr
+             | or_expr TOK_OR and_expr { /* $$ = new_node(OR,$1, $3); */ }    
+             | or_expr TOK_XOR and_expr { /* $$ = new_node(XOR,$1, $3); */ }   
+             | or_expr TOK_XNOR and_expr { /* $$ = new_node(XNOR,$1, $3); */ }  
              ;
 
 iff_expr :
-               or_expr { printf("action: iff_expr");  }
-             | iff_expr TOK_IFF or_expr { printf("action: iff_expr");  }   
+               or_expr
+             | iff_expr TOK_IFF or_expr { /* $$ = new_node(IFF, $1, $3); */ }   
              ;
 
-implies_expr : iff_expr { printf("action: implies_expr");  }
-             | iff_expr TOK_IMPLIES implies_expr { printf("action: implies_expr");  } 
+implies_expr : iff_expr
+             | iff_expr TOK_IMPLIES implies_expr { /* $$ = new_node(IMPLIES, $1, $3); */ }
              ;
 
-basic_expr : implies_expr { printf("action: basic_expr");  }
+basic_expr : implies_expr
            ;
 
-simple_expression : basic_expr { printf("action: simple_expression");  }  
+simple_expression : basic_expr { /* if (!isCorrectExp($$, EXP_SIMPLE)) YYABORT; */ }  
                   ;
 
-next_expression   : basic_expr { printf("action: next_expression");  }  
+next_expression   : basic_expr { /* if (!isCorrectExp($$, EXP_NEXT)) YYABORT; */  }  
                   ;
 
-ctl_expression    : basic_expr { printf("action: ctl_expression");  }  
+ctl_expression    : basic_expr { /* if (!isCorrectExp($$, EXP_CTL)) YYABORT; */ }  
                   ;
 
 itype         : TOK_BOOLEAN { /* $$ = new_node(BOOLEAN, Nil, Nil); */  } 
-              | subrangetype { printf("action: itype");  }
-              | TOK_LCB type_value_list TOK_RCB { printf("action: itype");  }
+              | subrangetype
+              | TOK_LCB type_value_list TOK_RCB { /* $$ = new_node(SCALAR, $2, Nil); */ }
               ;
 
-type_value_list : type_value { printf("action: type_value_list");  } 
-                | type_value_list TOK_COMMA type_value { printf("action: type_value_list");  } 
+type_value_list : type_value { /* $$ = cons(find_atom($1), Nil); free_node($1); */ } 
+                | type_value_list TOK_COMMA type_value { /* $$ = cons(find_atom($3), $1); free_node($3); */ } 
                 ;
 
-type_value    : TOK_ATOM { printf("action: type_value");  }
-              | integer { printf("action: type_value");  }
-              | TOK_FALSEEXP { printf("action: type_value");  }
-              | TOK_TRUEEXP { printf("action: type_value");  }
+type_value    : TOK_ATOM
+              | integer
+              | TOK_FALSEEXP
+              | TOK_TRUEEXP
               ;
 
-module       : TOK_MODULE TOK_ATOM declarations { printf("action: module");  }
+module       : TOK_MODULE TOK_ATOM declarations { /* $$ = new_node(MODULE, $2, $3); */ }
              ;
 
 declarations : { /* $$ = Nil; */  }
-             | declarations declaration { printf("action: declarations");  } 
+             | declarations declaration { /* $$ = cons($2, $1); */ } 
              ;
 			 
-declaration  : var { printf("action: declaration");  }
-             | assign { printf("action: declaration");  }
-             | ctlspec { printf("action: declaration");  }
+declaration  : var
+             | assign
+             | ctlspec
              ;
 
-var           : TOK_VAR { printf("action: var");  } 
-              | TOK_VAR var_decl_list { printf("action: var");  } 
+var           : TOK_VAR { /* $$ = new_node(VAR, Nil, Nil); */ } 
+              | TOK_VAR var_decl_list { /* $$ = new_node(VAR, $2, Nil); */ } 
               ;
 
-var_decl_list : var_decl { printf("action: var_decl_list");  }                 
-              | var_decl_list var_decl { printf("action: var_decl_list");  }   
+var_decl_list : var_decl { /* $$ = cons($1, Nil); */ }                 
+              | var_decl_list var_decl { /* $$ = cons($2, $1); */ }   
               ;
 			  
-var_decl      : decl_var_id TOK_COLON itype TOK_SEMI { printf("action: var_decl");  }  
+var_decl      : decl_var_id TOK_COLON itype TOK_SEMI { /* $$ = new_node(COLON, $1, $3); */  }  
               ;
 
-assign        : TOK_ASSIGN assign_list { printf("action: assign");  } 
+assign        : TOK_ASSIGN assign_list { /* $$ = new_node(ASSIGN, $2, Nil); */  } 
               ;
 			  
 assign_list   : { /* $$ = Nil; */  }
               | assign_list one_assign { /* $$ = new_node(AND, $1, $2); */  }
               ;
 			  
-one_assign    : var_id TOK_EQDEF simple_expression TOK_SEMI { printf("action: one_assign");  }
-              | TOK_SMALLINIT TOK_LP var_id TOK_RP TOK_EQDEF simple_expression TOK_SEMI { printf("action: one_assign");  }
-              | TOK_NEXT TOK_LP var_id TOK_RP TOK_EQDEF next_expression TOK_SEMI { printf("action: one_assign");  }
+one_assign    : var_id TOK_EQDEF simple_expression TOK_SEMI { /* $$ = new_node(EQDEF, $1, $3); */ }
+              | TOK_SMALLINIT TOK_LP var_id TOK_RP TOK_EQDEF simple_expression TOK_SEMI { /* $$ = new_node(EQDEF,
+                                        new_node(SMALLINIT, $3, Nil), $6); */ }
+              | TOK_NEXT TOK_LP var_id TOK_RP TOK_EQDEF next_expression TOK_SEMI { /* $$ = new_node(EQDEF,
+                                        new_node(NEXT, $3, Nil),$6); */ }
               ;
 
 _ctlspec      : ctl_expression optsemi { /* $$ = $1; */  }
               ;
 
-ctlspec       : TOK_SPEC _ctlspec { printf("action: ctlspec");  }
-              | TOK_SPEC TOK_NAME var_id TOK_EQDEF  _ctlspec { printf("action: ctlspec");  }
+ctlspec       : TOK_SPEC _ctlspec { /* $$ = new_node(SPEC, $2, Nil); */ }
+              | TOK_SPEC TOK_NAME var_id TOK_EQDEF  _ctlspec { /* $$ = new_node(SPEC, $2, Nil); */ }
               ;
 
 optsemi       : | TOK_SEMI {}
               ;
 
-decl_var_id   : TOK_ATOM { printf("action: decl_var_id");  }
+decl_var_id   : TOK_ATOM
               ;
 
-var_id        : TOK_ATOM { printf("action: var_id");  }
+var_id        : TOK_ATOM
               ;
 
 //---------------------------------------end Grammar rules
