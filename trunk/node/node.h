@@ -1,3 +1,6 @@
+#ifndef NODE_H
+#define NODE_H 
+
 typedef union {
   int inttype;
   struct node *nodetype;
@@ -24,3 +27,5 @@ node_ptr unify_node();
 #define NIL ((node_ptr)0)
 #define FAILURE_NODE ((node_ptr)(-1))
 #define ATOM_MAX_LENGTH 256
+
+#endif

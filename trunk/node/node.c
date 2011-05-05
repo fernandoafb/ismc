@@ -14,12 +14,13 @@
 *                                                                           *
 \***************************************************************************/
 #include <stdio.h>
-#include <storage.h>
-#include <node.h>
-#include <hash.h>
 #include <string.h>
-#include <assoc.h>
-#include <y.tab.h>
+
+#include "storage.h"
+#include "node.h"
+#include "hash.h"
+#include "assoc.h"
+#include "../parser/symbols.h"
 
 extern int option_print_node_length;
 extern int option_print_width;
@@ -254,14 +255,14 @@ int p;
     if(!my_strncat(str,n->left.strtype->text,size))return(0);
     if(cdr(n)){
       char buf[ATOM_MAX_LENGTH];
-      sprintf(buf,"_%d",cdr(n));
+      sprintf(buf,"_%p",cdr(n)); //era %d
       return(my_strncat(str,buf,size));
     }
     return(1);
   case NUMBER:
     {
       char buf[ATOM_MAX_LENGTH];
-      sprintf(buf,"%d",car(n));
+      sprintf(buf,"%p",car(n)); //%d
       return(my_strncat(str,buf,size));
     }
   case DOT:
@@ -451,7 +452,7 @@ int p;
   case ATOM:
     fprintf(ff,n->left.strtype->text); return;
   case NUMBER:
-    fprintf(ff,"%d",car(n)); return;
+    fprintf(ff,"%p",car(n)); return; //era %d
   case DOT:
     if(!n->left.nodetype) fprint_node(ff,n->right.nodetype);
     else {
@@ -558,7 +559,7 @@ int p;
   if(prio < p)fprintf(ff,"(");
   switch(opkind){
   case 0:
-    fprintf(ff,op);
+    fprintf(ff,"%s", op);
     fprint_node1(ff,n->left.nodetype,prio);
     break;
   case 1:
@@ -568,7 +569,7 @@ int p;
     break;
   case 2:
     /* EF a..b f */
-    fprintf(ff,op);                /* EF */
+    fprintf(ff,"%s",op);                /* EF */
     fprint_node1(ff,(n->right.nodetype)->left.nodetype,prio); /* a */
     fprintf(ff,"..");
     fprint_node1(ff,(n->right.nodetype)->right.nodetype,prio); /* b */
@@ -609,7 +610,7 @@ FILE *stream;
 node_ptr n;
 int col;
 {
-  char *buf = (char *)malloc(option_print_node_length + 1);
+  char *buf = (char *)stg_malloc(option_print_node_length + 1);
   int c,p;
   if(buf == NULL) rpterr("Out of memory");
   buf[0] = 0;
