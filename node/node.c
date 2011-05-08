@@ -252,7 +252,7 @@ int p;
   case FALSEEXP:
     return(my_strncat(str,"FALSE",size));
   case ATOM:
-    if(!my_strncat(str,n->left.strtype->text,size))return(0);
+    if(!my_strncat(str,(char*)n->left.strtype,size))return(0);
     if(cdr(n)){
       char buf[ATOM_MAX_LENGTH];
       sprintf(buf,"_%p",cdr(n)); //era %d
@@ -450,7 +450,7 @@ int p;
   case FALSEEXP:
     fprintf(ff,"FALSE"); return;
   case ATOM:
-    fprintf(ff,n->left.strtype->text); return;
+    fprintf(ff,(char*)n->left.strtype); return;
   case NUMBER:
     fprintf(ff,"%p",car(n)); return; //era %d
   case DOT:
@@ -656,7 +656,7 @@ node_ptr n;
   switch(n->type){
   case ATOM:
     {
-      char c = *(n->left.strtype->text);
+      char c = *((char*)n->left.strtype);
       if(c <= 'Z' && c >= 'A')return(NIL);
       return(n);
     }
@@ -692,7 +692,7 @@ node_ptr n;
 {
   char firstchar;
   if(n->type != ATOM)return(0);
-  firstchar = *(n->left.strtype->text);
+  firstchar = *((char*)n->left.strtype);
   return(firstchar <= 'Z' && firstchar >= 'A');
 }
 

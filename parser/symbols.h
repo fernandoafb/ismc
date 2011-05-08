@@ -99,7 +99,7 @@ enum NUSMV_CORE_SYMBOLS {
   OF,
   SCALAR,
   CONS,
-  BDD,
+  SBDD,
   SEMI,
   LP,
   RP,
