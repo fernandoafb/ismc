@@ -5,6 +5,7 @@
 #include "node/node.h"
 
 #include "bdd/ast_to_bdd.h"
+#include "libs/buddy-2.4/src/bdd.h"
 
 // prototype of bison-generated parser function
 int yyparse();
@@ -21,10 +22,10 @@ int main(int argc, char *argv[]) {
 
     init_bdd();
 
-	root = yyparse();
+	root = (node_ptr) yyparse();
     result = eval_bdd(root);
     
-    bdd_printdot(root);
+    bdd_printdot(result);
     bdd_done();
 
     return EXIT_SUCCESS;
