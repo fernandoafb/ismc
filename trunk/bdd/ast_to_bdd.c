@@ -1,8 +1,10 @@
+#include <map>
 #include "ast_to_bdd.h"
 #include "../libs/buddy-2.4/src/bvec.h"
 #include "../libs/buddy-2.4/src/bdd.h"
 
 int next_varnum;
+std::map<string, int> symbolTable;
 
 void init_bdd() {
     bdd_init(1000, 100);
@@ -14,13 +16,30 @@ bdd eval_bdd(node_ptr n) {
     if (!n) return bddtrue;
 
     switch (n->type) {
-        case ATOM: return 0; // TODO
-        case AND: return bdd_and((bdd)n->left.bddtype, (bdd)n->right.bddtype);
-        case OR: return bdd_or((bdd)n->left.bddtype, (bdd)n->right.bddtype);
-        case XOR: return bdd_xor((bdd)n->left.bddtype, (bdd)n->right.bddtype);
-        case NOT: return bdd_not((bdd)n->left.bddtype);
-        case IMPLIES: return bdd_imp((bdd)n->left.bddtype, (bdd)n->right.bddtype);
-        case IFF: return bdd_biimp((bdd)n->left.bddtype, (bdd)n->right.bddtype);
+        case MODULE: return eval_bdd(n->right.nodetype);
+        case DECLS: return bdd_and(eval_bdd(n->left.nodetype), eval_bdd(n->right.nodetype));
+        case VAR:
+        {
+            string name = n->value.strtype;
+            symbolTable[name] = next_varnum;
+            return bdd_ithvar(next_varnum++);
+        }
+        case ASSIGN: return eval_bdd(n->left.nodetype);
+        case EQDEF: return 0;
+        case SMALLINIT: return 0;
+        case NEXT: return 0;
+        case ATOM:
+        {
+            string name = n->value.strtype;
+            int varNum = symbolTable[name];
+            return bdd_ithvar(varNum);
+        }
+        case AND: return bdd_and(eval_bdd((node)n->left.nodetype), eval_bdd((node)n->right.nodetype));
+        case OR: return bdd_or(eval_bdd((node)n->left.nodetype), eval_bdd((node)n->right.nodetype));
+        case XOR: return bdd_xor(eval_bdd((node)n->left.nodetype), eval_bdd((node)n->right.nodetype));
+        case NOT: return bdd_not(eval_bdd((node)n->left.nodetype));
+        case IMPLIES: return bdd_imp(eval_bdd((node)n->left.nodetype), eval_bdd((node)n->right.nodetype));
+        case IFF: return bdd_biimp(eval_bdd((node)n->left.nodetype), eval_bdd((node)n->right.nodetype));
         case EQUAL: return 0; // TODO
         case NOTEQUAL: return 0; //TODO
         case PLUS: return 0; // TODO
@@ -32,7 +51,6 @@ bdd eval_bdd(node_ptr n) {
         case LE: return 0;
         case GE: return 0;
         case NUMBER: return 0;
-        case NEXT: return 0;
         case TRUEEXP: return bddtrue;
         case FALSEEXP: return bddfalse;
         case CASE:
@@ -42,10 +60,6 @@ bdd eval_bdd(node_ptr n) {
             bdd h = eval_bdd(n->right.nodetype);
             return bdd_ite(f, g, h);
 		}
-        //case EXPR: return 0; // TODO
-        case VAR:
-            // TODO: associar em alguma tabela de símbolos
-            return bdd_ithvar(next_varnum++);
     }
     return 0;
 }
