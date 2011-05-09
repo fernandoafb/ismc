@@ -1,3 +1,6 @@
+#ifndef INIT_H
+#define INIT_H
+
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/times.h>
@@ -41,3 +44,4 @@ void yyerror();
 int yywrap();
 void indent();
 void indent_node();
+#endif

@@ -1,15 +1,18 @@
 %{
 //---------------------------------------Prologue
 #include "scanner.h"
+#include "../node/node.h"
 #include "grammar.h"
+#include "symbols.h"
 
 void yyerror(char *s);
+
 
 %}   
 
 /*Define o tipo de yylval*/
 %union {
-  //node_ptr node;
+  node_ptr node;
   int lineno;
 }
 //---------------------------------------Bison declarations
@@ -232,7 +235,7 @@ type_value    : TOK_ATOM
               | TOK_TRUEEXP
               ;
 
-module       : TOK_MODULE TOK_ATOM declarations { /* $$ = new_node(MODULE, $2, $3); */ }
+module       : TOK_MODULE TOK_ATOM declarations {  $$ = new_node(MODULE, NIL, NIL);/*$2, $3);*/  }
              ;
 
 declarations : { /* $$ = Nil; */  }
