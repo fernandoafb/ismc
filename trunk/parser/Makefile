@@ -10,6 +10,8 @@ all: bison flex $(OBJ)
 bison:
 	bison -y -d -v grammar.y
 
+grammar.o: ../node/node.h
+
 flex:
 	flex scanner.l
 
