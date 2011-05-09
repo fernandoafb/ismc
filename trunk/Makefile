@@ -1,24 +1,24 @@
 CC = gcc
-CFLAGS = -Wall -Werror -LFence $(LIB)
+CFLAGS = -Wall -Werror -LFence
 DEBUG = -g
-LFLAGS = -Wall -o
+LFLAGS = -Wall -lm -o
 SRC = $(wildcard *.c)
 LIB = libs/buddy-2.4/src/.libs/libbdd.a
-OBJ = $(SRC:.c=.o) $(wildcard parser/*.o) $(wildcard bdd/*.o) $(wildcard node/*.o)
+OBJ = $(SRC:.c=.o) $(wildcard parser/*.o) $(wildcard bdd/*.o) $(wildcard node/*.o) $(LIB)
 
-ismc: submakes $(OBJ)
+ismc: buddymake submakes $(OBJ)
 	$(CC) $(LFLAGS) ismc $(OBJ)
 	@echo "binário completo"
-	
-libs:
+
+buddymake:
 	@echo "Construindo bibliotecas"
 	@echo "Biblioteca BuDDy"
-	@cd libs/buddy-2.4 && $(MAKE)
+	@cd libs/buddy-2.4 && ./configure && $(MAKE)
 	@echo "BuDDy completo"
 	@echo "Bibliotecas completas"
 
 
-submakes:	
+submakes:
 	@echo "Construindo parser"	
 	@cd parser && $(MAKE)
 	@echo "parser completo"
