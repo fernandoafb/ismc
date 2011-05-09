@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <sys/types.h>
+#include <string.h>
 #include "storage.h"
+
 static char *addrlimit;
 static char *addrfree;
 
@@ -9,7 +11,7 @@ void init_storage()
 {
 #ifdef MACH
   mach_init();		/* needed to make sbrk() work */
-#endif MACH
+#endif
   /* addrfree points to the first free byte
      addrlimit points to the memory limit */
     addrfree = addrlimit = (char *) sbrk(0);
@@ -47,7 +49,7 @@ int n;
 }
 
 /* very simple implementation of free */
-void free(p)
+void stg_free(p)
 char *p;
 {
   return;

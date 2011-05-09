@@ -288,16 +288,16 @@ var_id        : TOK_ATOM
 //---------------------------------------end Grammar rules
 %%
 //---------------------------------------Epilogue
-int yywrap()
-{
-  return(1);
-}
+//int yywrap()
+//{
+//  return(1);
+//}
 
-void yyerror(char *s)
-{
-	extern char * yytext;
-	fprintf(stderr, "no token \"%s\": %s\n", yytext, s);
-}
+//void yyerror(char *s)
+//{
+//	extern char * yytext;
+//	fprintf(stderr, "no token \"%s\": %s\n", yytext, s);
+//}
 
 //---------------------------------------end Epilogue
 

@@ -13,7 +13,7 @@ typedef struct mgr{
 
 void init_storage();
 char *stg_malloc();
-void free();
+void stg_free();
 mgr_ptr new_mgr();
 rec_ptr new_rec(),dup_rec();
 void free_rec();

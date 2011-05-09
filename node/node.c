@@ -20,6 +20,7 @@
 #include "node.h"
 #include "hash.h"
 #include "assoc.h"
+#include "init.h"
 #include "../parser/symbols.h"
 
 extern int option_print_node_length;
@@ -450,7 +451,7 @@ int p;
   case FALSEEXP:
     fprintf(ff,"FALSE"); return;
   case ATOM:
-    fprintf(ff,(char*)n->left.strtype); return;
+    fprintf(ff,"%s",(char*)n->left.strtype); return; //não tinha formato
   case NUMBER:
     fprintf(ff,"%p",car(n)); return; //era %d
   case DOT:
@@ -624,7 +625,7 @@ int col;
   }
   fprintf(stream,"%s",buf);
   if(!c)fprintf(stream,"...");
-  free(buf);
+  stg_free(buf);
   return(col + p);
 }
 
