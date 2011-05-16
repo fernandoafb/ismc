@@ -1,10 +1,10 @@
-#include <map>
+//#include <map>
 #include "ast_to_bdd.h"
 #include "../libs/buddy-2.4/src/bvec.h"
 #include "../libs/buddy-2.4/src/bdd.h"
 
 int next_varnum;
-std::map<string, int> symbolTable;
+//std::map<string, int> symbolTable;
 
 void init_bdd() {
     bdd_init(1000, 100);
@@ -20,8 +20,8 @@ bdd eval_bdd(node_ptr n) {
         case DECLS: return bdd_and(eval_bdd(n->left.nodetype), eval_bdd(n->right.nodetype));
         case VAR:
         {
-            string name = n->value.strtype;
-            symbolTable[name] = next_varnum;
+            //string name = n->value.strtype;
+            //symbolTable[name] = next_varnum;
             return bdd_ithvar(next_varnum++);
         }
         case ASSIGN: return eval_bdd(n->left.nodetype);
@@ -30,16 +30,17 @@ bdd eval_bdd(node_ptr n) {
         case NEXT: return 0;
         case ATOM:
         {
-            string name = n->value.strtype;
-            int varNum = symbolTable[name];
-            return bdd_ithvar(varNum);
+            //string name = n->value.strtype;
+            //int varNum = symbolTable[name];
+            //return bdd_ithvar(varNum);
+        	return 0;
         }
-        case AND: return bdd_and(eval_bdd((node)n->left.nodetype), eval_bdd((node)n->right.nodetype));
-        case OR: return bdd_or(eval_bdd((node)n->left.nodetype), eval_bdd((node)n->right.nodetype));
-        case XOR: return bdd_xor(eval_bdd((node)n->left.nodetype), eval_bdd((node)n->right.nodetype));
-        case NOT: return bdd_not(eval_bdd((node)n->left.nodetype));
-        case IMPLIES: return bdd_imp(eval_bdd((node)n->left.nodetype), eval_bdd((node)n->right.nodetype));
-        case IFF: return bdd_biimp(eval_bdd((node)n->left.nodetype), eval_bdd((node)n->right.nodetype));
+        case AND: return bdd_and(eval_bdd((node_ptr)n->left.nodetype), eval_bdd((node_ptr)n->right.nodetype));
+        case OR: return bdd_or(eval_bdd((node_ptr)n->left.nodetype), eval_bdd((node_ptr)n->right.nodetype));
+        case XOR: return bdd_xor(eval_bdd((node_ptr)n->left.nodetype), eval_bdd((node_ptr)n->right.nodetype));
+        case NOT: return bdd_not(eval_bdd((node_ptr)n->left.nodetype));
+        case IMPLIES: return bdd_imp(eval_bdd((node_ptr)n->left.nodetype), eval_bdd((node_ptr)n->right.nodetype));
+        case IFF: return bdd_biimp(eval_bdd((node_ptr)n->left.nodetype), eval_bdd((node_ptr)n->right.nodetype));
         case EQUAL: return 0; // TODO
         case NOTEQUAL: return 0; //TODO
         case PLUS: return 0; // TODO
