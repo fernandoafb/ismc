@@ -1,3 +1,6 @@
+#ifndef ASSOC_H
+#define ASSOC_H
+
 typedef struct assoc{
   struct assoc *link;
   node_ptr x;
@@ -8,3 +11,5 @@ hash_ptr new_assoc();
 node_ptr find_assoc();
 void insert_assoc();
 void assoc_init();
+
+#endif ASSOC_H

@@ -1,3 +1,6 @@
+#ifndef HASH_H
+#define HASH_H
+
 typedef struct hash {
   int size;
   int (*hash_fun)();
@@ -9,3 +12,5 @@ typedef struct hash {
 hash_ptr new_hash();
 rec_ptr find_hash(),insert_hash();
 void clear_hash();
+
+#endif

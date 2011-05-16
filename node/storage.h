@@ -1,3 +1,6 @@
+#ifndef STORAGE_H
+#define STORAGE_H
+
 typedef struct rec {
   struct rec *link;
 } rec_rec, *rec_ptr;
@@ -17,3 +20,5 @@ void stg_free();
 mgr_ptr new_mgr();
 rec_ptr new_rec(),dup_rec();
 void free_rec();
+
+#endif STORAGE_H
