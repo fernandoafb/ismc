@@ -7,7 +7,7 @@
 
 void yyerror(char *s);
 
-
+node_ptr parse_tree;
 %}   
 
 /*Define o tipo de yylval*/
@@ -241,7 +241,7 @@ type_value    : TOK_ATOM
               | TOK_TRUEEXP
               ;
 
-module       : TOK_MODULE TOK_ATOM declarations {  $$ = new_node(MODULE, $2, $3);  }
+module       : TOK_MODULE TOK_ATOM declarations {  parse_tree = new_node(MODULE, $2, $3);  }
              ;
 
 declarations : { $$ = NIL; }
