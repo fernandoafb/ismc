@@ -2,6 +2,8 @@
 #include "../libs/buddy-2.4/src/bvec.h"
 #include "../libs/buddy-2.4/src/bdd.h"
 
+#define PRINT_BDD 1
+
 int next_varnum;
 //std::map<string, int> symbolTable;
 
@@ -24,20 +26,47 @@ int test_algebra_expr(short int a, short int b) {
 			(b == NUMBER || b == ATOM) );
 }
 
+void eval(node_ptr n) {
+    if (n->type == MODULE) {
+        // Avalia as declaracoes, que é uma lista construida com cons()
+        node_ptr d = n->right.nodetype;
+
+        while (d) {
+            node_ptr e = car(d);
+            d = cdr(d);
+            
+            switch (e->type) {
+                case VAR:
+                {
+                    printf("VAR\n");
+                    break;
+                }
+                case ASSIGN:
+                {
+                    printf("ASSIGN\n");
+                    bdd result = eval_bdd(e);
+                    
+                    if (PRINT_BDD) {
+                        bdd_printdot(result);
+                    }
+                }
+                case SPEC:
+                {
+                    printf("SPEC\n");
+                    break;
+                }
+            }
+        }
+
+        bdd_done();
+    }
+}
+
 bdd eval_bdd(node_ptr n) {
     if (!n) return bddtrue;
 
     switch (n->type) {
-        case MODULE: return eval_bdd(n->right.nodetype);
-        case DECLS: return bdd_and(eval_bdd(n->left.nodetype), eval_bdd(n->right.nodetype));
-        case VAR:
-        {
-            //string name = n->value.strtype;
-            //symbolTable[name] = next_varnum;
-            return bdd_ithvar(next_varnum++);
-        }
-        case ASSIGN: return eval_bdd(n->left.nodetype);
-        //case EQDEF: return 0;
+                //case EQDEF: return 0;
         //case SMALLINIT: return 0;
         //case NEXT: return 0;
         /*case ATOM:

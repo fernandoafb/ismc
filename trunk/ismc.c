@@ -26,10 +26,7 @@ int main(int argc, char *argv[]) {
     init_bdd();
 
     yyparse();
-    result = eval_bdd(parse_tree);
+    eval(parse_tree);
     
-    bdd_printdot(result);
-    bdd_done();
-
     return EXIT_SUCCESS;
 }
