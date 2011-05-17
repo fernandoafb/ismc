@@ -10,6 +10,6 @@ typedef struct assoc{
 hash_ptr new_assoc();
 node_ptr find_assoc();
 void insert_assoc();
-void assoc_init();
+void init_assoc();
 
 #endif
