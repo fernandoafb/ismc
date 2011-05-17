@@ -1,8 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "parser/grammar.h"
 #include "node/node.h"
+#include "parser/grammar.h"
 
 #include "bdd/ast_to_bdd.h"
 #include "libs/buddy-2.4/src/bdd.h"
