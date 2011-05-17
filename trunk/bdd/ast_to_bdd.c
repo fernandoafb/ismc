@@ -26,11 +26,20 @@ int test_algebra_expr(short int a, short int b) {
 			(b == NUMBER || b == ATOM) );
 }
 
+void instantiate_vars(node_ptr l) {
+    if (!l) return;
+
+    instantiate_vars(cdr(l));
+
+    // TODO: associar a variavel car(l) a uma bdd_ithvar()
+}
+
 void eval(node_ptr n) {
     if (n->type == MODULE) {
-        // Avalia as declaracoes, que é uma lista construida com cons()
+        bdd result;
         node_ptr d = n->right.nodetype;
 
+        // Avalia a lista de declaracoes do módulo
         while (d) {
             node_ptr e = car(d);
             d = cdr(d);
@@ -39,12 +48,14 @@ void eval(node_ptr n) {
                 case VAR:
                 {
                     printf("VAR\n");
+                    instantiate_vars(e->left.nodetype);
+
                     break;
                 }
                 case ASSIGN:
                 {
                     printf("ASSIGN\n");
-                    bdd result = eval_bdd(e);
+                    result = eval_bdd(e);
                     
                     if (PRINT_BDD) {
                         bdd_printdot(result);

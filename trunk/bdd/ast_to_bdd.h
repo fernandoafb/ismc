@@ -7,7 +7,8 @@
 #include "../parser/symbols.h"
 
 void init_bdd();
-void eval(node_ptr n);
+void eval(node_ptr);
 bdd eval_bdd(node_ptr);
+void instantiate_vars(node_ptr);
 
 #endif
