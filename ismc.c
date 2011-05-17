@@ -25,8 +25,8 @@ int main(int argc, char *argv[]) {
 
     init_bdd();
 
-	root = (node_ptr) yyparse();
-    result = eval_bdd(root);
+    yyparse();
+    result = eval_bdd(parse_tree);
     
     bdd_printdot(result);
     bdd_done();
