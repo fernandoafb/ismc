@@ -12,4 +12,4 @@ node_ptr find_assoc();
 void insert_assoc();
 void assoc_init();
 
-#endif ASSOC_H
+#endif

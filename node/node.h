@@ -16,6 +16,8 @@ typedef struct node{
 
 node_ptr new_node(),find_node();
 void init_node(),free_node();
+int sprint_node();
+int print_node_atcol();
 void print_node();
 void fprint_node();
 node_ptr subst_node(),map(),key_node();

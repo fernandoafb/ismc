@@ -1,6 +1,7 @@
 #include "init.h"
 
 #include <stdlib.h>
+#include <unistd.h>
 
 #define REORDER
 
@@ -271,7 +272,7 @@ void pop_atom()
 void yyerror(s)
 char *s;
 {
-    extern yytext;
+    extern char * yytext; //FIXME: int ou char * ?
     start_err();
     fprintf(stderr,"at token \"%p\": %s\n",&yytext,s);
     if(!interactive_mode)finish_err();

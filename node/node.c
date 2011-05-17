@@ -87,7 +87,7 @@ node_ptr left,right;
 {
     extern int yylineno;
     node_rec temp;
-    node_ptr *resptr;
+    //node_ptr *resptr;
     temp.type = type;
     temp.lineno = yylineno;
     temp.left.nodetype = left;
@@ -171,7 +171,7 @@ void walk(f,l)
 void (*f)();
 node_ptr l;
 {
-  node_ptr t;
+  //node_ptr t;
   if(l == NIL)return;
   (*f)(car(l));
   walk(f,cdr(l));
@@ -599,7 +599,7 @@ node_ptr n;
   fprint_node1(ff,n,0);
 }
 
-print_node_stdout(n)
+void print_node_stdout(n)
 node_ptr n;
 {
   fprint_node(stdout,n);
@@ -652,7 +652,7 @@ node_ptr n;
 node_ptr key_node(n)
 node_ptr n;
 {
-  node_ptr m;
+  //node_ptr m;
   if(n==NIL)return(n);
   switch(n->type){
   case ATOM:
@@ -726,7 +726,7 @@ node_ptr n1,n2;
   return(unify(car(n1),car(n2)) && unify(cdr(n1),cdr(n2)));
 }
   
-occur_check(n)
+int occur_check(n)
 node_ptr n;
 {
   if(n == NIL)return(1);

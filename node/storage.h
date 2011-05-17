@@ -21,4 +21,4 @@ mgr_ptr new_mgr();
 rec_ptr new_rec(),dup_rec();
 void free_rec();
 
-#endif STORAGE_H
+#endif

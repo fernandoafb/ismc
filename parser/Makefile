@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -LFence #-Werror
+CFLAGS = -Wall -LFence $(DEBUG)
 DEBUG = -g
 LFLAGS = -Wall -o
 SRC = $(wildcard *.c)
@@ -7,12 +7,12 @@ OBJ = $(SRC:.c=.o)
 
 all: bison flex $(OBJ)
 
-bison:
+bison: grammar.y
 	bison -y -d -v grammar.y
 
 grammar.o: ../node/node.h
 
-flex:
+flex: scanner.l grammar.y
 	flex scanner.l
 
 clean:
