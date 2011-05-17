@@ -19,7 +19,7 @@ void yyerror(char *s);
 
 //define o simbolo inicial da gramática
 %start module
-%output "grammar.c"
+%output="grammar.c"
 %debug
 
 
