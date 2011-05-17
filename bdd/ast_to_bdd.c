@@ -1,4 +1,3 @@
-//#include <map>
 #include "ast_to_bdd.h"
 #include "../libs/buddy-2.4/src/bvec.h"
 #include "../libs/buddy-2.4/src/bdd.h"
@@ -10,7 +9,20 @@ void init_bdd() {
     bdd_init(1000, 100);
     bdd_setvarnum(10);
     next_varnum = 0;
-} 
+}
+
+// função para testar expressões...
+// argumentos devem ser números ou variáveis ou booleanos
+// para ser verdadeiro
+int test_all_expr(short int a, short int b) {
+	return ( (a == NUMBER || a == ATOM || a == TRUEEXP || a == FALSEEXP) &&
+			(b == NUMBER || b == ATOM || b == TRUEEXP || b == FALSEEXP) );
+}
+
+int test_algebra_expr(short int a, short int b) {
+	return ( (a == NUMBER || a == ATOM) &&
+			(b == NUMBER || b == ATOM) );
+}
 
 bdd eval_bdd(node_ptr n) {
     if (!n) return bddtrue;
@@ -25,33 +37,156 @@ bdd eval_bdd(node_ptr n) {
             return bdd_ithvar(next_varnum++);
         }
         case ASSIGN: return eval_bdd(n->left.nodetype);
-        case EQDEF: return 0;
-        case SMALLINIT: return 0;
-        case NEXT: return 0;
-        case ATOM:
+        //case EQDEF: return 0;
+        //case SMALLINIT: return 0;
+        //case NEXT: return 0;
+        /*case ATOM:
         {
             //string name = n->value.strtype;
             //int varNum = symbolTable[name];
             //return bdd_ithvar(varNum);
         	return 0;
         }
+        */
         case AND: return bdd_and(eval_bdd((node_ptr)n->left.nodetype), eval_bdd((node_ptr)n->right.nodetype));
         case OR: return bdd_or(eval_bdd((node_ptr)n->left.nodetype), eval_bdd((node_ptr)n->right.nodetype));
         case XOR: return bdd_xor(eval_bdd((node_ptr)n->left.nodetype), eval_bdd((node_ptr)n->right.nodetype));
         case NOT: return bdd_not(eval_bdd((node_ptr)n->left.nodetype));
         case IMPLIES: return bdd_imp(eval_bdd((node_ptr)n->left.nodetype), eval_bdd((node_ptr)n->right.nodetype));
         case IFF: return bdd_biimp(eval_bdd((node_ptr)n->left.nodetype), eval_bdd((node_ptr)n->right.nodetype));
-        case EQUAL: return 0; // TODO
-        case NOTEQUAL: return 0; //TODO
-        case PLUS: return 0; // TODO
-        case MINUS: return 0;
-        case DIVIDE: return 0;
-        case MOD: return 0;
-        case LT: return 0;
-        case GT: return 0;
-        case LE: return 0;
-        case GE: return 0;
-        case NUMBER: return 0;
+        case EQUAL:
+        {
+			if (test_all_expr(eval_bdd((node_ptr)n->left.nodetype),
+					eval_bdd((node_ptr)n->right.nodetype)))
+			{
+				if (eval_bdd((node_ptr)n->left.nodetype) == eval_bdd((node_ptr)n->right.nodetype))
+				{
+					return bddtrue;
+				}
+				else
+				{
+					return bddfalse;
+				}
+			}
+        }
+        case NOTEQUAL:
+        {
+			if (test_all_expr(eval_bdd((node_ptr)n->left.nodetype),
+					eval_bdd((node_ptr)n->right.nodetype)))
+			{
+				if (eval_bdd((node_ptr)n->left.nodetype) != eval_bdd((node_ptr)n->right.nodetype))
+				{
+					return bddtrue;
+				}
+				else
+				{
+					return bddfalse;
+				}
+			}
+        }
+        case PLUS:
+		{
+			if (test_algebra_expr(eval_bdd((node_ptr)n->left.nodetype),
+					eval_bdd((node_ptr)n->right.nodetype)))
+			{
+				int result = eval_bdd((node_ptr)n->left.nodetype) + eval_bdd((node_ptr)n->right.nodetype);
+				// TODO terminar
+			}
+		}
+        case MINUS:
+		{
+			if (test_algebra_expr(eval_bdd((node_ptr)n->left.nodetype),
+					eval_bdd((node_ptr)n->right.nodetype)))
+			{
+				int result = eval_bdd((node_ptr)n->left.nodetype) - eval_bdd((node_ptr)n->right.nodetype);
+				// TODO terminar
+			}
+		}
+        case DIVIDE:
+		{
+			if (test_algebra_expr(eval_bdd((node_ptr)n->left.nodetype),
+					eval_bdd((node_ptr)n->right.nodetype)))
+			{
+				int result = eval_bdd((node_ptr)n->left.nodetype) / eval_bdd((node_ptr)n->right.nodetype);
+				// TODO terminar
+			}
+		}
+        case MOD:
+		{
+			if (test_algebra_expr(eval_bdd((node_ptr)n->left.nodetype),
+					eval_bdd((node_ptr)n->right.nodetype)))
+			{
+				int result = eval_bdd((node_ptr)n->left.nodetype) % eval_bdd((node_ptr)n->right.nodetype);
+				// TODO terminar
+			}
+		}
+        case LT:
+		{
+			if (test_algebra_expr(eval_bdd((node_ptr)n->left.nodetype),
+					eval_bdd((node_ptr)n->right.nodetype)))
+			{
+				if (eval_bdd((node_ptr)n->left.nodetype) < eval_bdd((node_ptr)n->right.nodetype))
+				{
+					return bddtrue;
+				}
+				else
+				{
+					return bddfalse;
+				}
+			}
+		}
+        case GT:
+		{
+			if (test_algebra_expr(eval_bdd((node_ptr)n->left.nodetype),
+					eval_bdd((node_ptr)n->right.nodetype)))
+			{
+				if (eval_bdd((node_ptr)n->left.nodetype) > eval_bdd((node_ptr)n->right.nodetype))
+				{
+					return bddtrue;
+				}
+				else
+				{
+					return bddfalse;
+				}
+			}
+		}
+        case LE:
+        {
+			if (test_algebra_expr(eval_bdd((node_ptr)n->left.nodetype),
+					eval_bdd((node_ptr)n->right.nodetype)))
+			{
+				if (eval_bdd((node_ptr)n->left.nodetype) <= eval_bdd((node_ptr)n->right.nodetype))
+				{
+					return bddtrue;
+				}
+				else
+				{
+					return bddfalse;
+				}
+			}
+        }
+        case GE:
+        {
+			if (test_algebra_expr(eval_bdd((node_ptr)n->left.nodetype),
+					eval_bdd((node_ptr)n->right.nodetype)))
+			{
+				if (eval_bdd((node_ptr)n->left.nodetype) >= eval_bdd((node_ptr)n->right.nodetype))
+				{
+					return bddtrue;
+				}
+				else
+				{
+					return bddfalse;
+				}
+			}
+        }
+        case NUMBER:
+        {
+            int num = n->left.inttype;
+            //int varNum = symbolTable[name];
+            //return bdd_ithvar(varNum);
+        	//return 0;
+        }
         case TRUEEXP: return bddtrue;
         case FALSEEXP: return bddfalse;
         case CASE:
@@ -62,6 +197,5 @@ bdd eval_bdd(node_ptr n) {
             return bdd_ite(f, g, h);
 		}
     }
-    return 0;
 }
 
