@@ -1,7 +1,9 @@
 #include <stdio.h>
 #include <sys/types.h>
 #include <string.h>
+#include <unistd.h>
 #include "storage.h"
+#include "init.h"
 
 static char *addrlimit;
 static char *addrfree;
@@ -18,18 +20,19 @@ void init_storage()
 }
 
 /* get ALLOCSIZE more bytes from the O.S. */
-static getmore()
+static void getmore()
 {
   char *na;
 /*  fprintf(stderr,"Getting %d more bytes\n",ALLOCSIZE); */
   if(addrlimit != (char *)sbrk(0)){ /* in case someone else did sbrk */
-    sbrk((4 - (sbrk(0) % 4)) % 4);
+    sbrk((4 - ((int)sbrk(0) % 4)) % 4); //FIXME: esse cast está correto? estava dando erro de compilação
     addrfree = addrlimit = (char *)sbrk(0);
     if(((unsigned)addrlimit) % 4 != 0)
-      rpterr("Failed to allocate %d bytes: addrlimit = %xH, na = %xH\n",
-	     ALLOCSIZE,(int)addrlimit,(int)na);
+      rpterr("Failed to allocate %d bytes: addrlimit = %xH",//, na = %xH\n",
+	     ALLOCSIZE,(int)addrlimit);//,(int)na);
   }
-  if((na = (char *)sbrk(ALLOCSIZE)) != addrlimit)
+  na = (char *)sbrk(ALLOCSIZE);
+  if(na != addrlimit)
     rpterr("Failed to allocate %d bytes: addrlimit = %xH, na = %xH\n",
 	   ALLOCSIZE,(int)addrlimit,(int)na);
   addrlimit += ALLOCSIZE;

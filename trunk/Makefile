@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -Werror -LFence
+CFLAGS = -Wall -LFence $(DEBUG)
 DEBUG = -g
 LFLAGS = -Wall -lm -o
 SRC = $(wildcard *.c)
@@ -33,3 +33,7 @@ submakes:
 
 clean:
 	rm -f *.o
+	@cd parser && $(MAKE) clean
+	@cd node && $(MAKE) clean
+	@cd bdd && $(MAKE) clean
+

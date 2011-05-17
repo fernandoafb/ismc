@@ -1,7 +1,7 @@
 CC = gcc
-CFLAGS = #-Wall -LFence #-Werror
+CFLAGS = -Wall -LFence $(DEBUG) #-Werror
 DEBUG = -g
-LFLAGS = -o #-Wall
+LFLAGS = -Wall -o
 SRC = $(wildcard *.c)
 OBJ = $(SRC:.c=.o)
 

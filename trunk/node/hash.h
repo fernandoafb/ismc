@@ -12,5 +12,6 @@ typedef struct hash {
 hash_ptr new_hash();
 rec_ptr find_hash(),insert_hash();
 void clear_hash();
+void remove_hash();
 
 #endif

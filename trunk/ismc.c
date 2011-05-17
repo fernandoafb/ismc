@@ -5,7 +5,6 @@
 #include "parser/grammar.h"
 
 #include "bdd/ast_to_bdd.h"
-#include "libs/buddy-2.4/src/bdd.h"
 
 // prototype of bison-generated parser function
 int yyparse();
