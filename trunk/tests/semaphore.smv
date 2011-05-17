@@ -1,0 +1,23 @@
+MODULE main
+VAR
+  state : {idle,entering,critical,exiting};
+  semaphore : boolean;
+ASSIGN
+  init(semaphore) := 0;
+  init(state) := idle;
+  next(state) := 
+    case 
+      state = idle : {idle,entering};
+      state = entering & !semaphore : critical;
+      state = critical : {critical,exiting};
+      state = exiting : idle;
+      1 : state;
+    esac;
+  next(semaphore) := 
+    case
+      state = entering : 1;
+      state = exiting : 0;
+      1 : semaphore;
+    esac;
+SPEC
+  AG (state = entering -> AF state = critical)
