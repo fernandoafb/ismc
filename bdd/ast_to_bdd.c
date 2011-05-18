@@ -70,6 +70,7 @@ void eval(node_ptr n) {
                     if (PRINT_BDD) {
                         bdd_printdot(result);
                     }
+                    break;
                 }
                 case SPEC:
                 {
