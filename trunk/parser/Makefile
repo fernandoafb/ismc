@@ -3,7 +3,7 @@ CFLAGS = -Wall -LFence $(DEBUG)
 DEBUG = -g
 LFLAGS = -Wall -o
 SRC = $(wildcard *.c)
-OBJ = $(SRC:.c=.o)
+OBJ = scanner.o grammar.o
 
 all: bison flex $(OBJ)
 
