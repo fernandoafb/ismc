@@ -2,7 +2,7 @@
 %{
 #include "../node/node.h"
 #include "grammar.h"
-
+#include "symbols.h"
 %}
 
 %option yylineno
@@ -159,12 +159,14 @@
 [0-9]+           {
                   /* here tmp can be safely cast to int */
                  // yylval.node = new_node(NUMBER, NODE_FROM_INT((int)(tmp)), Nil);
+                 yylval.node = new_node(NUMBER, NIL, NIL);
                   return(TOK_NUMBER);
                  }
 
  /* identifier */
 [A-Za-z_][A-Za-z0-9_\$#-]*  {
                   //yylval.node = new_node(ATOM, (node_ptr)find_string(yytext),Nil);
+                  yylval.node = new_node(ATOM, NIL,NIL);
                   return(TOK_ATOM);
                  }
                  
