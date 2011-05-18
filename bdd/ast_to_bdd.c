@@ -7,10 +7,20 @@
 int next_varnum;
 //std::map<string, int> symbolTable;
 
+#define INT_DOMAIN 4
+#define INT_BIT_SIZE 2
+
 void init_bdd() {
     bdd_init(1000, 100);
     bdd_setvarnum(10);
     next_varnum = 0;
+}
+
+bvec get_bvec(int num)
+{
+    int domain[1] = {INT_DOMAIN};
+    fdd_extdomain(domain, 1);
+    return bvec_con(INT_BIT_SIZE, num);
 }
 
 // função para testar expressões...
@@ -223,6 +233,7 @@ bdd eval_bdd(node_ptr n) {
         case NUMBER:
         {
             int num = n->left.inttype;
+            bvec b = get_bvec(num);
             //int varNum = symbolTable[name];
             //return bdd_ithvar(varNum);
         	//return 0;
