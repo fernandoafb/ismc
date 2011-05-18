@@ -104,14 +104,13 @@ bdd eval_bdd(node_ptr n) {
 			return eval_bdd((node_ptr)n->left.nodetype);
 		}
         //case NEXT: return 0;
-        /*case ATOM:
+        case ATOM:
         {
             //string name = n->value.strtype;
             //int varNum = symbolTable[name];
             //return bdd_ithvar(varNum);
         	return 0;
         }
-        */
         case AND: return bdd_and(eval_bdd((node_ptr)n->left.nodetype), eval_bdd((node_ptr)n->right.nodetype));
         case OR: return bdd_or(eval_bdd((node_ptr)n->left.nodetype), eval_bdd((node_ptr)n->right.nodetype));
         case XOR: return bdd_xor(eval_bdd((node_ptr)n->left.nodetype), eval_bdd((node_ptr)n->right.nodetype));

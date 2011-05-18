@@ -1,5 +1,6 @@
 /* ----------------------------definitions------------------------------------ */
 %{
+#include "../node/string.h"
 #include "../node/node.h"
 #include "grammar.h"
 #include "symbols.h"
@@ -168,7 +169,11 @@
                   //yylval.node = new_node(ATOM, (node_ptr)find_string(yytext),Nil);
                   // adicionado o yytext, assim podemos referenciar um ATOM pelo identificador
                   yylval.node = new_node(ATOM, NIL, NIL);
-                  (yylval.node)->left.strtype = (struct string*)yytext;
+                 
+                  string_rec *a = malloc(sizeof(string_rec));
+                  a->text = (char *)strcpy((char *)malloc(strlen(yytext)+1),yytext);
+
+                  (yylval.node)->left.strtype = a;
                   return(TOK_ATOM);
                  }
                  
