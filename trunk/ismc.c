@@ -23,6 +23,7 @@ int main(int argc, char *argv[]) {
     init_bdd();
 
     yyparse();
+    //dump_tree(parse_tree);
     eval(parse_tree);
     //bdd_printall();
     return EXIT_SUCCESS;

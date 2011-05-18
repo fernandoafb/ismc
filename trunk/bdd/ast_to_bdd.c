@@ -10,16 +10,16 @@ int next_varnum;
 #define INT_DOMAIN 4
 #define INT_BIT_SIZE 2
 
+int domain[2] = {INT_DOMAIN,INT_DOMAIN};
+
 void init_bdd() {
     bdd_init(1000, 100);
     bdd_setvarnum(10);
     next_varnum = 0;
 }
 
-bvec get_bvec(int num)
+bvec num_to_bvec(int num)
 {
-    int domain[1] = {INT_DOMAIN};
-    fdd_extdomain(domain, 1);
     return bvec_con(INT_BIT_SIZE, num);
 }
 
@@ -87,8 +87,21 @@ bdd eval_bdd(node_ptr n) {
     if (!n) return bddtrue;
 
     switch (n->type) {
-                //case EQDEF: return 0;
-        //case SMALLINIT: return 0;
+//        case EQDEF:
+//		{
+//			// atrib
+//			eval_bdd((node_ptr)n->left.nodetype); // var
+//			eval_bdd((node_ptr)n->right.nodetype); // exp
+//			return 0;
+//		}
+        case SMALLINIT:
+		{
+			// um init é como se fosse um eqdef
+			// soh q com uma validação pra ocorrer somente uma vez
+			// é só isso pq o nodo a esquerda é o valor a ser inicializado
+			// a atribuição acontece no nodo pai q eh um eqdef
+			return eval_bdd((node_ptr)n->left.nodetype);
+		}
         //case NEXT: return 0;
         /*case ATOM:
         {
@@ -139,8 +152,11 @@ bdd eval_bdd(node_ptr n) {
 			if (test_algebra_expr(eval_bdd((node_ptr)n->left.nodetype),
 					eval_bdd((node_ptr)n->right.nodetype)))
 			{
-				int result = eval_bdd((node_ptr)n->left.nodetype) + eval_bdd((node_ptr)n->right.nodetype);
-				// TODO terminar
+			    fdd_extdomain(domain, 2);
+			    bvec y = bvec_varfdd(1); // eval_bdd((node_ptr)n->left.nodetype); // tratar var e int
+			    bvec x = bvec_varfdd(0); // eval_bdd((node_ptr)n->right.nodetype); // tratar var e int
+			    bvec z = bvec_add(x,y);
+				//return bvec_val(z); // tratar retorno do tipo BVEC pra eval_bdd q retorna bdd
 			}
 		}
         case MINUS:
@@ -148,8 +164,11 @@ bdd eval_bdd(node_ptr n) {
 			if (test_algebra_expr(eval_bdd((node_ptr)n->left.nodetype),
 					eval_bdd((node_ptr)n->right.nodetype)))
 			{
-				int result = eval_bdd((node_ptr)n->left.nodetype) - eval_bdd((node_ptr)n->right.nodetype);
-				// TODO terminar
+				fdd_extdomain(domain, 2);
+				bvec y = bvec_varfdd(1); // eval_bdd((node_ptr)n->left.nodetype); // tratar var e int
+				bvec x = bvec_varfdd(0); // eval_bdd((node_ptr)n->right.nodetype); // tratar var e int
+				bvec z = bvec_sub(x,y);
+				//return bvec_val(z); // tratar retorno do tipo BVEC pra eval_bdd q retorna bdd
 			}
 		}
         case DIVIDE:
@@ -157,17 +176,46 @@ bdd eval_bdd(node_ptr n) {
 			if (test_algebra_expr(eval_bdd((node_ptr)n->left.nodetype),
 					eval_bdd((node_ptr)n->right.nodetype)))
 			{
-				int result = eval_bdd((node_ptr)n->left.nodetype) / eval_bdd((node_ptr)n->right.nodetype);
-				// TODO terminar
+				fdd_extdomain(domain, 2);
+				bvec resto = bvec_varfdd(0);
+				bvec resultado = bvec_varfdd(0);
+				bvec y = bvec_varfdd(1); // eval_bdd((node_ptr)n->left.nodetype); // tratar var e int
+				bvec x = bvec_varfdd(0); // eval_bdd((node_ptr)n->right.nodetype); // tratar var e int
+				int resultCode = bvec_div(x,y,&resto,&resultado);
+				// bvec_divfixed(x,constante,&resto,&resultado); // caso especial qnd a divisão é por um int
+				if (resultCode < 0)
+				{
+					bvec_free(resto);
+					bvec_free(resultado);
+				}
+				else
+				{
+					return bvec_val(resultado); // tratar retorno do tipo BVEC pra eval_bdd q retorna bdd
+				}
 			}
 		}
         case MOD:
 		{
+			// refatorar esse treco, mod e divide sao a msm coisa...
 			if (test_algebra_expr(eval_bdd((node_ptr)n->left.nodetype),
 					eval_bdd((node_ptr)n->right.nodetype)))
 			{
-				int result = eval_bdd((node_ptr)n->left.nodetype) % eval_bdd((node_ptr)n->right.nodetype);
-				// TODO terminar
+				fdd_extdomain(domain, 2);
+				bvec resto = bvec_varfdd(0);
+				bvec resultado = bvec_varfdd(0);
+				bvec y = bvec_varfdd(1); // eval_bdd((node_ptr)n->left.nodetype); // tratar var e int
+				bvec x = bvec_varfdd(0); // eval_bdd((node_ptr)n->right.nodetype); // tratar var e int
+				int resultCode = bvec_div(x,y,&resto,&resultado);
+				// bvec_divfixed(x,constante,&resto,&resultado); // caso especial qnd a divisão é por um int
+				if (resultCode < 0)
+				{
+					bvec_free(resto);
+					bvec_free(resultado);
+				}
+				else
+				{
+					return bvec_val(resto); // tratar retorno do tipo BVEC pra eval_bdd q retorna bdd
+				}
 			}
 		}
         case LT:
@@ -233,7 +281,7 @@ bdd eval_bdd(node_ptr n) {
         case NUMBER:
         {
             int num = n->left.inttype;
-            bvec b = get_bvec(num);
+            bvec b = num_to_bvec(num);
             //int varNum = symbolTable[name];
             //return bdd_ithvar(varNum);
         	//return 0;
