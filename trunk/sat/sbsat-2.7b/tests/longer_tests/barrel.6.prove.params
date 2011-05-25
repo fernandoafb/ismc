@@ -1,0 +1,1 @@
+barrel.6.prove --All 1 --limit-neg-minmax 100 --formatin 3 --expected-result TRIV_UNSAT
