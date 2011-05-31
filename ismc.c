@@ -12,7 +12,6 @@ int yyparse();
 extern node_ptr parse_tree;
 
 int main(int argc, char *argv[]) {
-    bdd result;
     init_node();
 	if ((argc > 1) && (freopen(argv[1], "r", stdin) == NULL)) {
 		printf("%s: O arquivo %s não pode ser aberto.\n", argv[0], argv[1]);
