@@ -69,8 +69,9 @@ void eval(node_ptr n) {
                     result = eval_bdd(e);
                     
                     if (PRINT_BDD) {
-                    	if (result.bdd)
-                    		bdd_printdot((bdd)result.bdd);
+                    	if (result.bdd) {
+                    		//bdd_printdot((bdd)result.bdd);
+                        }
                     }
                     break;
                 }

@@ -13,6 +13,7 @@ extern node_ptr parse_tree;
 
 int main(int argc, char *argv[]) {
     init_node();
+    init_string();
 	if ((argc > 1) && (freopen(argv[1], "r", stdin) == NULL)) {
 		printf("%s: O arquivo %s não pode ser aberto.\n", argv[0], argv[1]);
 
@@ -22,7 +23,7 @@ int main(int argc, char *argv[]) {
     init_bdd();
 
     yyparse();
-    //dump_tree(parse_tree);
+    dump_tree(parse_tree);
     eval(parse_tree);
     //bdd_printall();
     return EXIT_SUCCESS;
