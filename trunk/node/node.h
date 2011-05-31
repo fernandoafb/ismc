@@ -5,7 +5,7 @@ typedef union {
   int inttype;
   struct node *nodetype;
   struct string *strtype;
-  struct bdd *bddtype;
+  struct typed_bdd *bddtype;
 } value;
 
 typedef struct node{
