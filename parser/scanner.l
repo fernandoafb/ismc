@@ -168,13 +168,8 @@
 [A-Za-z_][A-Za-z0-9_\$#-]*  {
                   //yylval.node = new_node(ATOM, (node_ptr)find_string(yytext),Nil);
                   // adicionado o yytext, assim podemos referenciar um ATOM pelo identificador
-                  yylval.node = new_node(ATOM, NIL, NIL);
+                  yylval.node = new_node(ATOM, (node_ptr)find_string(yytext), NIL);
                  
-                  //string_rec *a = malloc(sizeof(string_rec));
-                  //a->link = NULL;
-                  //a->text = (char *)strcpy((char *)malloc(strlen(yytext)+1),yytext);
-
-                  //(yylval.node)->left.strtype = (string_rec*)a;
                   return(TOK_ATOM);
                  }
                  
