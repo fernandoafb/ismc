@@ -6,6 +6,8 @@ SRC = $(wildcard *.c)
 LIB = libs/buddy-2.4/src/.libs/libbdd.a
 OBJ = $(SRC:.c=.o) $(wildcard parser/*.o) $(wildcard bdd/*.o) $(wildcard node/*.o) $(LIB)
 
+all: ismc
+
 ismc: submakes $(OBJ)
 	$(CC) $(LFLAGS) ismc $(SRC:.c=.o) $(shell ls parser/*.o) $(shell ls bdd/*.o) $(shell ls node/*.o) $(LIB)
 	@echo "binário completo"
