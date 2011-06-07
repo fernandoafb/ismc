@@ -88,6 +88,42 @@ void eval(node_ptr n) {
     }
 }
 
+typed_bdd bdd_equals(node_ptr n)
+{
+	int ltype = (bdd) eval_bdd((node_ptr)n->left.nodetype).type;
+	int rtype = (bdd) eval_bdd((node_ptr)n->right.nodetype).type;
+	if (ltype == rtype)
+	{
+		if (ltype == TIPO_BDD)
+		{
+			bdd l = (bdd) eval_bdd((node_ptr)n->left.nodetype).bdd;
+			bdd r = (bdd) eval_bdd((node_ptr)n->right.nodetype).bdd;
+			bdd l_equal_r = bdd_apply(l,r,bddop_biimp);
+			return new_bdd(l_equal_r);
+		}
+		else
+		{
+			bdd** l = (bdd**) eval_bdd((node_ptr)n->left.nodetype).ibdd;
+			bdd** r = (bdd**) eval_bdd((node_ptr)n->right.nodetype).ibdd;
+			int i = 0;
+			int igual = 1;
+			for ( ; i < numero_bits && igual; i++)
+			{
+				if (**(l+i) != **(r+i))
+				{
+					igual = 0;
+				}
+			}
+			return (igual) ? new_bdd(bddtrue) : new_bdd(bddfalse);
+		}
+	}
+	// não era pra ter esse else, é um erro semântico
+	// por ex, true == 2
+	else {
+		return new_bdd(bddfalse);
+	}
+}
+
 typed_bdd eval_bdd(node_ptr n) {
 
     if (!n) return new_bdd(bddtrue);
@@ -159,8 +195,16 @@ typed_bdd eval_bdd(node_ptr n) {
 			bdd l_biimp_r = bdd_biimp(l,r);
 			return new_bdd(l_biimp_r);
 		}
-        //case EQUAL:
-        //case NOTEQUAL:
+        case EQUAL:
+        {
+        	return bdd_equals(n);
+        }
+        case NOTEQUAL:
+        {
+        	bdd l = (bdd) bdd_equals(n).bdd;
+        	bdd not_l = bdd_not(l);
+        	return new_bdd(not_l);
+        }
         //case PLUS:
         //case MINUS:
         //case DIVIDE:

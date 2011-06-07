@@ -12,4 +12,6 @@ void eval(node_ptr);
 typed_bdd eval_bdd(node_ptr);
 void instantiate_vars(node_ptr);
 
+typed_bdd bdd_equals(node_ptr);
+
 #endif

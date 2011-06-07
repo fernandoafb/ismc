@@ -3,8 +3,6 @@
 #include "stdlib.h"
 #include "../libs/buddy-2.4/src/bdd.h"
 
-#define numero_bits 2
-
 typed_bdd new_bdd(b)
 bdd b;
 {
@@ -39,7 +37,7 @@ int i;
     int maxInt = pow(2,i) - 1;
     // caso seja maior que o limite para inteiros
     if (i > maxInt) i = maxInt;
-    temp.inteiro = (bdd**) int_to_bdd(i);
+    temp.ibdd = (bdd**) int_to_bdd(i);
     return temp;
 }
 

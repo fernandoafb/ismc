@@ -5,11 +5,12 @@
 
 #define TIPO_INTEIRO 1
 #define TIPO_BDD 2
+#define numero_bits 2
 
 typedef struct typed_bdd {
   short int type; // pode ser inteiro (TIPO_INTEIRO) ou bdd (TIPO_BDD)
   bdd *bdd; // caso seja bdd
-  bdd **inteiro; // caso seja inteiro, cada valor binario do inteiro é um bdd
+  bdd **ibdd; // caso seja inteiro, cada valor binario do inteiro é um bdd
 } typed_bdd;
 
 typed_bdd new_bdd(), new_ibdd();
