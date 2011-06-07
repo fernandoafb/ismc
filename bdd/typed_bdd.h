@@ -12,8 +12,8 @@ typedef struct typed_bdd {
   bdd **inteiro; // caso seja inteiro, cada valor binario do inteiro é um bdd
 } typed_bdd;
 
-typed_bdd new_bdd(), new_inteiro();
-bdd int_to_bdd();
+typed_bdd new_bdd(), new_ibdd();
+bdd** int_to_bdd();
 int bdd_to_int();
 
 #endif
