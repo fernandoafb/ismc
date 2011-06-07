@@ -26,6 +26,7 @@ void free_list();
 node_ptr cons(),car(),cdr(),append(),reverse(),list_minus();
 node_ptr unify_node();
 void dump_tree();
+void symbol_representation();
 #define NIL ((node_ptr)0)
 #define FAILURE_NODE ((node_ptr)(-1))
 #define ATOM_MAX_LENGTH 256

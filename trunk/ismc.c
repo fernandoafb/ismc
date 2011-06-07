@@ -20,9 +20,9 @@ int main(int argc, char *argv[]) {
 		exit(EXIT_FAILURE);
 	}
 
-    init_bdd();
-
+    printf("--------------Parser begin-----------------\n");
     yyparse();
+    printf("---------------Parser end------------------\n");
     dump_tree(parse_tree);
     eval(parse_tree);
     //bdd_printall();
