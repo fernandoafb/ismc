@@ -11,7 +11,7 @@ typedef union {
 typedef struct node{
   struct node *link;
   short int type,lineno;
-  short int bddith;
+  short int bdd_ith;
   value left,right;
 } node_rec,*node_ptr;
 
@@ -28,7 +28,8 @@ node_ptr cons(),car(),cdr(),append(),reverse(),list_minus();
 node_ptr unify_node();
 void dump_tree();
 void symbol_representation();
-short int getBDDIth();
+short int get_bdd_ith();
+short int set_bdd_ith(node_ptr, short int);
 #define NIL ((node_ptr)0)
 #define FAILURE_NODE ((node_ptr)(-1))
 #define ATOM_MAX_LENGTH 256

@@ -8,7 +8,6 @@
 #define PRINT_BDD 1
 
 int next_varnum;
-char ** symbolTable;
 
 #define INT_DOMAIN 4
 #define INT_BIT_SIZE 2
@@ -32,13 +31,11 @@ void instantiate_vars(node_ptr l) {
     if (l != NIL){
     	node_ptr n = car(l);
 		if(n->type == COLON){
-			printf("::instantiate_vars::decl founded!\n");
 	    	node_ptr atom = car(n);
 	    	if(atom->type == ATOM){
 	    		char *varname = ((string_ptr)atom->left.strtype)->text;
 	    		printf("::instantiate_vars::Atom founded! %s\n", varname);
-	    		//FIXME: armazenar o next_varnum no nodo ao inves da symbol table
-	    		symbolTable[next_varnum] = varname;
+	    		set_bdd_ith(atom, next_varnum);
 	    		next_varnum++;
 	    	}
 		}else
@@ -60,8 +57,6 @@ void eval_reverse(node_ptr l){
 				bdd_init(1000, 100);
 				bdd_setvarnum(vlength);
 				next_varnum = 0;
-				symbolTable = (char**)malloc(sizeof(char[vlength]));
-				symbol_representation(car(cdr(e))->type);
 				instantiate_vars(e);
 				break;
 

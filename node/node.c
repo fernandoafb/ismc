@@ -820,9 +820,24 @@ void symbol_representation(enum NUSMV_CORE_SYMBOLS type){
 
 }
 
-short int getBDDIth(node_ptr n){
+/**
+ * @return -1 caso o nó não seja ATOM ou o valor do ith
+ *
+ */
+short int get_bdd_ith(node_ptr n){
 	if(n->type == ATOM){
-		return n->bddith;
+		return n->bdd_ith;
+	}else
+		return -1;
+}
+
+/**
+ * @return -1 caso o nó não seja ATOM
+ */
+short int set_bdd_ith(node_ptr n, short int bdd_ith){
+	if(n->type == ATOM){
+		car(n)->bdd_ith = bdd_ith;
+		return 1;
 	}else
 		return -1;
 }
