@@ -37,7 +37,7 @@ void instantiate_vars(node_ptr l) {
 	    	if(atom->type == ATOM){
 	    		char *varname = ((string_ptr)atom->left.strtype)->text;
 	    		printf("::instantiate_vars::Atom founded! %s\n", varname);
-	    		bdd_ithvar(next_varnum);
+	    		//FIXME: armazenar o next_varnum no nodo ao inves da symbol table
 	    		symbolTable[next_varnum] = varname;
 	    		next_varnum++;
 	    	}

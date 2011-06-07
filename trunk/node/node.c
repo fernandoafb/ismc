@@ -819,3 +819,10 @@ void symbol_representation(enum NUSMV_CORE_SYMBOLS type){
 	}
 
 }
+
+short int getBDDIth(node_ptr n){
+	if(n->type == ATOM){
+		return n->bddith;
+	}else
+		return -1;
+}
