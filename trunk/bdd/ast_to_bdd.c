@@ -15,12 +15,6 @@ char ** symbolTable;
 
 int domain[2] = {INT_DOMAIN,INT_DOMAIN};
 
-//
-//bvec num_to_bvec(int num)
-//{
-//    return bvec_con(INT_BIT_SIZE, num);
-//}
-//
 //// função para testar expressões...
 //// argumentos devem ser números ou variáveis ou booleanos
 //// para ser verdadeiro
@@ -127,12 +121,49 @@ typed_bdd eval_bdd(node_ptr n) {
             //return bdd_ithvar(varNum);
 //        	/return 0;
         //}
-        case AND: return new_bdd(bdd_and((bdd)eval_bdd((node_ptr)n->left.nodetype).bdd, (bdd)eval_bdd((node_ptr)n->right.nodetype).bdd));
-        case OR: return new_bdd(bdd_or((bdd)eval_bdd((node_ptr)n->left.nodetype).bdd, (bdd) eval_bdd((node_ptr)n->right.nodetype).bdd));
-        case XOR: return new_bdd(bdd_xor((bdd)eval_bdd((node_ptr)n->left.nodetype).bdd, (bdd)eval_bdd((node_ptr)n->right.nodetype).bdd));
-        case NOT: return new_bdd(bdd_not((bdd)eval_bdd((node_ptr)n->left.nodetype).bdd));
-        case IMPLIES: return new_bdd(bdd_imp((bdd)eval_bdd((node_ptr)n->left.nodetype).bdd, (bdd)eval_bdd((node_ptr)n->right.nodetype).bdd));
-        case IFF: return new_bdd(bdd_biimp((bdd)eval_bdd((node_ptr)n->left.nodetype).bdd, (bdd)eval_bdd((node_ptr)n->right.nodetype).bdd));
+        case AND:
+		{
+			bdd l = (bdd) eval_bdd((node_ptr)n->left.nodetype).bdd;
+			bdd r = (bdd) eval_bdd((node_ptr)n->right.nodetype).bdd;
+			bdd l_and_r = bdd_and(l,r);
+			return new_bdd(l_and_r);
+		}
+        case OR:
+		{
+			bdd l = (bdd) eval_bdd((node_ptr)n->left.nodetype).bdd;
+			bdd r = (bdd) eval_bdd((node_ptr)n->right.nodetype).bdd;
+			bdd l_or_r = bdd_or(l,r);
+			return new_bdd(l_or_r);
+		}
+        case XOR:
+		{
+			bdd l = (bdd) eval_bdd((node_ptr)n->left.nodetype).bdd;
+			bdd r = (bdd) eval_bdd((node_ptr)n->right.nodetype).bdd;
+			bdd l_xor_r = bdd_xor(l,r);
+			return new_bdd(l_xor_r);
+		}
+        case NOT:
+        {
+        	bdd l = (bdd) eval_bdd((node_ptr)n->left.nodetype).bdd;
+        	// not não tem r, porque é unário e r é nulo
+        	bdd not_l = bdd_not(l);
+        	return new_bdd(not_l);
+        }
+        case IMPLIES:
+		{
+			bdd l = (bdd) eval_bdd((node_ptr)n->left.nodetype).bdd;
+			bdd r = (bdd) eval_bdd((node_ptr)n->right.nodetype).bdd;
+			bdd l_imp_r = bdd_imp(l,r);
+			return new_bdd(l_imp_r);
+		}
+        case IFF:
+		{
+			// igualdade, equivalence, bi-implicação
+			bdd l = (bdd) eval_bdd((node_ptr)n->left.nodetype).bdd;
+			bdd r = (bdd) eval_bdd((node_ptr)n->right.nodetype).bdd;
+			bdd l_biimp_r = bdd_biimp(l,r);
+			return new_bdd(l_biimp_r);
+		}
         //case EQUAL:
         //case NOTEQUAL:
         //case PLUS:
@@ -143,15 +174,12 @@ typed_bdd eval_bdd(node_ptr n) {
         //case GT:
         //case LE:
         //case GE:
-        //case NUMBER:
-        //{
-            //int num = n->left.inttype;
-            //bvec b = num_to_bvec(num);
-            //int varNum = symbolTable[name];
-            //return bdd_ithvar(varNum);
-        	//return 0;
-        //}
-        case TRUEEXP: return new_bdd(bddtrue);
+        case NUMBER:
+        {
+            int number = n->left.inttype;
+            return new_ibdd(number);
+        }
+        case TRUEEXP:  return new_bdd(bddtrue);
         case FALSEEXP: return new_bdd(bddfalse);
         case CASE:
 		{
