@@ -792,3 +792,30 @@ void dump_tree1(node_ptr node, node_ptr pai){
 void dump_tree(node_ptr node){
 	dump_tree1(node, NIL);
 }
+
+void symbol_representation(enum NUSMV_CORE_SYMBOLS type){
+	switch (type) {
+		case MODULE:
+			printf("::symbol_representation::MODULE\n");
+			break;
+		case VAR:
+			printf("::symbol_representation::VAR\n");
+			break;
+		case ASSIGN:
+			printf("::symbol_representation::ASSIGN\n");
+			break;
+		case SPEC:
+			printf("::symbol_representation::SPEC\n");
+			break;
+		case ATOM:
+			printf("::symbol_representation::ATOM\n");
+			break;
+		case COLON:
+			printf("::symbol_representation::COLON\n");
+			break;
+		default:
+			printf("::symbol_representation::Error: symbol not found\n");
+			break;
+	}
+
+}
