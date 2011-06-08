@@ -23,10 +23,7 @@ int semantic_test(node_ptr n)
 
 typed_bdd result_bdd(int result)
 {
-    if (result)
-    	return new_bdd(bddtrue);
-    else
-    	return new_bdd(bddfalse);
+	return (result) ? new_bdd(bddtrue) : new_bdd(bddfalse);
 }
 
 typed_bdd math_expr(node_ptr n, int op)
