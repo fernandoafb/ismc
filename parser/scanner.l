@@ -158,9 +158,9 @@
 
  /* integer number */
 [0-9]+           {
-                  /* here tmp can be safely cast to int */
-                 // yylval.node = new_node(NUMBER, NODE_FROM_INT((int)(tmp)), Nil);
-                 yylval.node = new_node(NUMBER, NIL, NIL);
+                 int i;
+                 sscanf(yytext, "%d", &i);
+                 yylval.node = new_node(NUMBER, i, NIL);
                   return(TOK_NUMBER);
                  }
 
