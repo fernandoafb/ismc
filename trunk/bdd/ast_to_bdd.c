@@ -119,7 +119,8 @@ void eval_reverse(node_ptr l){
 
 			case ASSIGN:
 				printf("ASSIGN\n");
-				eval_assign(e);
+				transition_relation = eval_assign(e,NEXT);
+				invariant_relation = eval_assign(e,SMALLINIT);
 				if (PRINT_BDD) {
 					if (invariant_relation) {
 						bdd_printdot(invariant_relation);
@@ -147,29 +148,39 @@ void eval(node_ptr n) {
     }
 }
 
-void eval_assign(node_ptr n){
+bdd eval_assign(node_ptr n, enum NUSMV_CORE_SYMBOLS type){
+	bdd l, r;
+	typed_bdd b;
 	symbol_representation(n->type);
 	switch (n->type) {
 		case AND:
-			eval_assign(car(n));
-			eval_assign(cdr(n));
-			break;
+			l = eval_assign(car(n), type);
+			r = eval_assign(cdr(n), type);
+			return bdd_and(l,r);
 
 		case SMALLINIT:
-//			if(invariant_relation)
-//				invariant_relation = bdd_and(invariant_relation, (bdd)(eval_bdd(car(n)).bdd));
-//			else
-				invariant_relation = (bdd)(eval_bdd(car(n)).bdd);
-			break;
-//
-//		case NEXT:
-//			if(transition_relation)
-//				transition_relation = bdd_and(transition_relation, (bdd)eval_bdd(car(n)).bdd);
-//			else
-				transition_relation = (bdd)eval_bdd(car(n)).bdd;
-			break;
+			//car(n) é um EQDEF
+			//car(car(n)) é um ATOM
+			l = bdd_ithvar(get_bdd_ith(car(car(n))));
+			b = eval_bdd(cdr(n));
+			r = (b.type == TIPO_BDD ? (bdd)b.bdd : (bdd)b.ibdd);
+			return bdd_biimp(l,r);
+
+		case NEXT:
+			//car(n) é um EQDEF
+			//car(car(n)) é um ATOM
+			//o bdd_ith é incrementado para pegar a variavel linha
+			l = bdd_ithvar(get_bdd_ith(car(car(n)))+1);
+			b = eval_bdd(cdr(n));
+			r = (b.type == TIPO_BDD ? (bdd)b.bdd : (bdd)b.ibdd);
+			return bdd_biimp(l,r);
+
+		case EQDEF:
+			//FIXME: descobrir para que serve um EQDEF solto no ASSIGN
 
 		default:
+			printf("::eval_assign::Error: invalid expression on ASSIGN\n");
+			exit(EXIT_FAILURE);
 			break;
 	}
 }

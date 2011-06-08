@@ -12,7 +12,8 @@ typedef struct node{
   struct node *link;
   short int type,lineno;
   /**
-   * No caso de representar um inteiro, aponta para o LSB
+   * TODO: No caso de representar um inteiro, aponta para o LSB
+   * A variável linha é bdd_ith+1
    */
   short int bdd_ith;
   value left,right;
