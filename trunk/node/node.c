@@ -782,7 +782,7 @@ node_ptr n1,n2;
 }
 
 void dump_tree1(node_ptr node, node_ptr pai){
-	if(node != NIL && node->type != ATOM){
+	if(node != NIL && node->type != ATOM && node->type != NUMBER){
 		printf("[%p -> %p,%d,%d]\n", pai, node, node->type, node->lineno);
 		dump_tree1(node->left.nodetype, node);
 		dump_tree1(node->right.nodetype, node);
