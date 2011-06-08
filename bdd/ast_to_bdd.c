@@ -216,7 +216,8 @@ typed_bdd eval_bdd(node_ptr n) {
     switch (n->type) {
         case EQDEF:
 		{
-			bdd l = (bdd) eval_bdd((node_ptr)n->left.nodetype).bdd;
+			typed_bdd ltyped = eval_bdd((node_ptr)n->left.nodetype);
+			bdd l = (bdd) ltyped.bdd;
 			node_ptr rnode = (node_ptr)n->right.nodetype;
 			if (rnode != NIL)
 			{
@@ -226,7 +227,7 @@ typed_bdd eval_bdd(node_ptr n) {
 			}
 			else
 			{
-				return eval_bdd((node_ptr)n->right.nodetype);
+				return ltyped;
 			}
 
 		}
