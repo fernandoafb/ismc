@@ -1,13 +1,167 @@
-#summary One-sentence summary of this page.
+#summary Palavras reservadas e regras da gramática do ISMC. Reserved keywords and grammar rules for ISMC.
 
-= Introduction =
+= Palavras Reservadas =
 
-Add your content here.
+MODULE, DEFINE, MDEFINE, CONSTANTS, VAR, IVAR, FROZENVAR,
+INIT, TRANS, INVAR, SPEC, CTLSPEC, LTLSPEC, PSLSPEC, COMPUTE,
+NAME, INVARSPEC, FAIRNESS, JUSTICE, COMPASSION, ISA, ASSIGN,
+CONSTRAINT, SIMPWFF, CTLWFF, LTLWFF, PSLWFF, COMPWFF, IN, MIN,
+MAX, MIRROR, PRED, PREDICATES, process, array, of, boolean,
+integer, real, word, word1, bool, signed, unsigned, extend,
+resize, sizeof, uwconst, swconst, EX, AX, EF, AF, EG, AG, E, F, O, G,
+H, X, Y, Z, A, U, S, V, T, BU, EBF, ABF, EBG, ABG, case, esac, mod, next,
+init, union, in, xor, xnor, self, TRUE, FALSE, count
 
+= Identiﬁers =
 
-= Details =
+identifier ::
+identifier_first_character
+| identifier identifier_consecutive_character
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+identifier_first_character :: one of
+ABCDEFGHIJKLMNOPQRSTUVWXYZ
+abcdefghijklmnopqrstuvwxyz_
+
+identifier_consecutive_character ::
+identifier_first_character
+| digit
+| one of $ # -
+
+digit :: one of 0 1 2 3 4 5 6 7 8 9
+
+= Integer Numbers =
+
+integer_number ::
+| digit
+| integer_number digit
+
+= Constants =
+
+constant ::
+boolean_constant
+| integer_constant
+| symbolic_constant
+
+boolean_constant :: one of
+FALSE TRUE
+
+integer_constant :: integer_number
+
+symbolic_constant :: identifier
+
+= Basic Expressions =
+
+basic_expr :: simple_expr
+| next ( basic_expr ) -- next expression
+
+= Simple Expression =
+
+simple_expr::constant -- a constant
+| identifier -- a variable identifier
+| ( basic_expr )
+| ! basic_expr -- logical/bitwise NOT
+| basic_expr & basic_expr -- logical/bitwise AND
+| basic_expr | basic_expr -- logical/bitwise OR
+| basic_expr xor basic_expr -- logical/bitwise exclusive OR
+| basic_expr xnor basic_expr -- logical/bitwise NOT xor
+| basic_expr -> basic_expr -- logical/bitwise implication
+| basic_expr <-> basic_expr -- logical/bitwise equivalence
+| basic_expr = basic_expr -- equality
+| basic_expr != basic_expr -- inequality
+| basic_expr < basic_expr -- less than
+| basic_expr > basic_expr -- greater than
+| basic_expr <= basic_expr -- less than or equal
+| basic_expr >= basic_expr -- greater than or equal
+| - basic_expr -- unary minus
+| basic_expr + basic_expr -- integer addition
+| basic_expr - basic_expr -- integer subtraction
+| basic_expr * basic_expr -- integer multiplication
+| basic_expr / basic_expr -- integer division
+| basic_expr mod basic_expr -- integer remainder
+| basic_expr >> basic_expr -- bit shift right
+| basic_expr << basic_expr -- bit shift left
+| case_expr -- case expression
+
+= ASSIGN Declaration = 
+
+assign_constraint:: ASSIGN assign_list
+
+assign_list::assign ;
+| assign_list assign ;
+
+assign::
+identifier := simple_expr
+| init( identifier ):= simple_expr
+| next( identifier ):= basic_expr
+
+= Case Expression and If-Then-Else Expression = 
+
+case_expr :: case case_body esac
+
+case_body ::
+basic_expr : basic_expr ;
+| case_body basic_expr : basic_expr ;
+
+= Type Speciﬁer = 
+
+type_specifier ::
+boolean
+| { enumeration_type_body }
+| integer_number .. integer_number
+
+(limitar intervalo até 4)
+
+enumeration_type_body ::
+enumeration_type_value
+| enumeration_type_body , enumeration_type_value
+
+enumeration_type_value ::
+symbolic_constant
+| integer_number
+
+= State, Input and Frozen Variables = 
+
+var_declaration :: VAR var_list
+
+var_list :: identifier : type_specifier ;
+| var_list identifier : type_specifier ;
+
+= Programa = 
+
+program::module
+
+= Module Declarations = 
+
+module :: MODULE main [module_body]
+
+module_body ::
+module_element
+| module_body module_element
+
+module_element ::
+var_declaration
+| assign_constraint
+| ctl_specification
+
+= CTL Speciﬁcation =
+
+ctl_specification :: SPEC ctl_expr ;
+
+ctl_expr ::
+simple_expr -- a simple boolean expression
+| ( ctl_expr )
+| ! ctl_expr -- logical not
+| ctl_expr & ctl_expr -- logical and
+| ctl_expr | ctl_expr -- logical or
+| ctl_expr xor ctl_expr -- logical exclusive or
+| ctl_expr xnor ctl_expr -- logical NOT exclusive or
+| ctl_expr -> ctl_expr -- logical implies
+| ctl_expr <-> ctl_expr -- logical equivalence
+| EG ctl_expr -- exists globally
+| EX ctl_expr -- exists next state
+| EF ctl_expr -- exists finally
+| AG ctl_expr -- forall globally
+| AX ctl_expr -- forall next state
+| AF ctl_expr -- forall finally
+| E “[“ ctl_expr U ctl_expr “]” -- exists until
+| A “[“ ctl_expr U ctl_expr “]” -- forall until
