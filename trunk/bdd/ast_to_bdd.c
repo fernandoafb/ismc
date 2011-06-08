@@ -9,24 +9,72 @@
 
 int next_varnum;
 
-#define INT_DOMAIN 4
-#define INT_BIT_SIZE 2
+int semantic_test(node_ptr n)
+{
+	int ltype = (bdd) eval_bdd((node_ptr)n->left.nodetype).type;
+	int rtype = (bdd) eval_bdd((node_ptr)n->right.nodetype).type;
+	return (ltype == rtype && ltype == TIPO_IBDD);
+}
 
-int domain[2] = {INT_DOMAIN,INT_DOMAIN};
+typed_bdd result_bdd(int result)
+{
+    if (result)
+    	return new_bdd(bddtrue);
+    else
+    	return new_bdd(bddfalse);
+}
 
-//// função para testar expressões...
-//// argumentos devem ser números ou variáveis ou booleanos
-//// para ser verdadeiro
-//int test_all_expr(short int a, short int b) {
-//	return ( (a == NUMBER || a == ATOM || a == TRUEEXP || a == FALSEEXP) &&
-//			(b == NUMBER || b == ATOM || b == TRUEEXP || b == FALSEEXP) );
-//}
-//
-//int test_algebra_expr(short int a, short int b) {
-//	return ( (a == NUMBER || a == ATOM) &&
-//			(b == NUMBER || b == ATOM) );
-//}
-//
+typed_bdd math_expr(node_ptr n, int op)
+{
+	bdd** l = (bdd**) eval_bdd((node_ptr)n->left.nodetype).ibdd;
+	bdd** r = (bdd**) eval_bdd((node_ptr)n->right.nodetype).ibdd;
+	int lval = ibdd_to_int(l);
+	int rval = ibdd_to_int(r);
+	int result;
+	typed_bdd math_typed_bdd;
+	switch(op)
+	{
+		case PLUS: result = lval + rval;
+				   result = handle_bounds(result);
+				   math_typed_bdd = new_ibdd(result);
+			       break;
+		case MINUS: result = lval - rval;
+				    result = handle_bounds(result);
+				    math_typed_bdd = new_ibdd(result);
+			        break;
+		case DIVIDE: result = lval / rval;
+		             result = handle_bounds(result);
+		             math_typed_bdd = new_ibdd(result);
+			         break;
+		case MOD: result = lval % rval;
+		          result = handle_bounds(result);
+		          math_typed_bdd = new_ibdd(result);
+			      break;
+		case LT: result = lval < rval;
+			     math_typed_bdd = result_bdd(result);
+			     break;
+		case GT: result = lval > rval;
+				 math_typed_bdd = result_bdd(result);
+		         break;
+		case LE: result = lval <= rval;
+				 math_typed_bdd = result_bdd(result);
+		         break;
+		case GE: result = lval >= rval;
+				 math_typed_bdd = result_bdd(result);
+		         break;
+	}
+	return math_typed_bdd;
+}
+
+int handle_bounds(int v)
+{
+	// overflow
+	if (v > MAX_INT_ISMC) v = MAX_INT_ISMC;
+	// underflow
+	if (v < 0) v = 0;
+	return v;
+}
+
 void instantiate_vars(node_ptr l) {
     if (l != NIL){
     	node_ptr n = car(l);
@@ -107,7 +155,7 @@ typed_bdd bdd_equals(node_ptr n)
 			bdd** r = (bdd**) eval_bdd((node_ptr)n->right.nodetype).ibdd;
 			int i = 0;
 			int igual = 1;
-			for ( ; i < numero_bits && igual; i++)
+			for ( ; i < NUM_BITS_ISMC && igual; i++)
 			{
 				if (**(l+i) != **(r+i))
 				{
@@ -205,14 +253,70 @@ typed_bdd eval_bdd(node_ptr n) {
         	bdd not_l = bdd_not(l);
         	return new_bdd(not_l);
         }
-        //case PLUS:
-        //case MINUS:
-        //case DIVIDE:
-        //case MOD:
-        //case LT:
-        //case GT:
-        //case LE:
-        //case GE:
+        case PLUS:
+        {
+        	// tratando erros semanticos
+        	// 1 + true
+        	int semantic_test_passed = semantic_test(n);
+        	if (!semantic_test_passed) return new_ibdd(0);
+        	return math_expr(n,PLUS);
+        }
+        case MINUS:
+        {
+        	// tratando erros semanticos
+        	// 1 - true
+        	int semantic_test_passed = semantic_test(n);
+        	if (!semantic_test_passed) return new_ibdd(0);
+        	return math_expr(n,MINUS);
+        }
+        case DIVIDE:
+        {
+        	// tratando erros semanticos
+        	// 1 / true
+        	int semantic_test_passed = semantic_test(n);
+        	if (!semantic_test_passed) return new_ibdd(0);
+        	return math_expr(n,DIVIDE);
+        }
+        case MOD:
+        {
+        	// tratando erros semanticos
+        	// 1 % true
+        	int semantic_test_passed = semantic_test(n);
+        	if (!semantic_test_passed) return new_ibdd(0);
+        	return math_expr(n,MOD);
+        }
+        case LT:
+        {
+        	// tratando erros semanticos
+        	// 1 < true
+        	int semantic_test_passed = semantic_test(n);
+        	if (!semantic_test_passed) return new_ibdd(0);
+        	return math_expr(n,LT);
+        }
+        case GT:
+        {
+        	// tratando erros semanticos
+        	// 1 < true
+        	int semantic_test_passed = semantic_test(n);
+        	if (!semantic_test_passed) return new_ibdd(0);
+        	return math_expr(n,GT);
+        }
+        case LE:
+        {
+        	// tratando erros semanticos
+        	// 1 < true
+        	int semantic_test_passed = semantic_test(n);
+        	if (!semantic_test_passed) return new_ibdd(0);
+        	return math_expr(n,LE);
+        }
+        case GE:
+        {
+        	// tratando erros semanticos
+        	// 1 < true
+        	int semantic_test_passed = semantic_test(n);
+        	if (!semantic_test_passed) return new_ibdd(0);
+        	return math_expr(n,GE);
+        }
         case NUMBER:
         {
             int number = n->left.inttype;
