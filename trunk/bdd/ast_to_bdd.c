@@ -220,20 +220,34 @@ typed_bdd eval_bdd(node_ptr n) {
     if (!n) return new_bdd(bddtrue);
 
     switch (n->type) {
-//        case EQDEF:
-//		{
-//			// atrib
-//			eval_bdd((node_ptr)n->left.nodetype); // var
-//			eval_bdd((node_ptr)n->right.nodetype); // exp
-//			return 0;
-//		}
-        //case ATOM:
-        //{
-            //string name = n->value.strtype;
-            //int varNum = symbolTable[name];
-            //return bdd_ithvar(varNum);
-//        	/return 0;
-        //}
+        case EQDEF:
+		{
+			bdd l = (bdd) eval_bdd((node_ptr)n->left.nodetype).bdd;
+			node_ptr rnode = (node_ptr)n->right.nodetype;
+			if (rnode != NIL)
+			{
+				bdd r = (bdd) eval_bdd((node_ptr)n->right.nodetype).bdd;
+				bdd l_eqdef_r = bdd_apply(l,r,bddop_biimp);
+				return new_bdd(l_eqdef_r);
+			}
+			else
+			{
+				return eval_bdd((node_ptr)n->right.nodetype);
+			}
+
+		}
+        case ATOM:
+        {
+        	int ithvar = get_bdd_ith(n);
+            return new_bdd(bdd_ithvar(ithvar));
+        }
+        case AND:
+        {
+			bdd l = (bdd) eval_bdd((node_ptr)n->left.nodetype).bdd;
+			bdd r = (bdd) eval_bdd((node_ptr)n->right.nodetype).bdd;
+			bdd l_and_r = bdd_and(l,r);
+			return new_bdd(l_and_r);
+        }
         case OR:
 		{
 			bdd l = (bdd) eval_bdd((node_ptr)n->left.nodetype).bdd;
