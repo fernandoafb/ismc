@@ -225,7 +225,7 @@ ctl_expression    : basic_expr { /* if (!isCorrectExp($$, EXP_CTL)) YYABORT; */ 
                   ;
 
 itype         : TOK_BOOLEAN {  $$ = new_node(BOOLEAN, NIL, NIL);   } 
-              | subrangetype
+              | subrange
               | TOK_LCB type_value_list TOK_RCB {  $$ = new_node(SCALAR, $2, NIL);  }
               ;
 
