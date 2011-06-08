@@ -2,6 +2,9 @@
 #include "hash.h"
 #include "string.h"
 
+#include <string.h>
+#include <stdlib.h>
+
 static mgr_ptr string_mgr;
 static hash_ptr string_hash;
 #define STRING_HASH_SIZE 511

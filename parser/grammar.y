@@ -268,14 +268,14 @@ assign        : TOK_ASSIGN assign_list {  $$ = new_node(ASSIGN, $2, NIL);   }
               ;
 			  
 assign_list   : {  $$ = NIL;   }
-              | assign_list one_assign {  $$ = new_node(AND, $1, $2);   }
+              | one_assign assign_list {  $$ = new_node(AND, $1, $2);   }
               ;
 			  
 one_assign    : var_id TOK_EQDEF simple_expression TOK_SEMI {  $$ = new_node(EQDEF, $1, $3);  }
-              | TOK_SMALLINIT TOK_LP var_id TOK_RP TOK_EQDEF simple_expression TOK_SEMI {  $$ = new_node(EQDEF,
-                                        new_node(SMALLINIT, $3, NIL), $6);  }
-              | TOK_NEXT TOK_LP var_id TOK_RP TOK_EQDEF next_expression TOK_SEMI {  $$ = new_node(EQDEF,
-                                        new_node(NEXT, $3, NIL),$6);  }
+              | TOK_SMALLINIT TOK_LP var_id TOK_RP TOK_EQDEF simple_expression TOK_SEMI {  $$ = new_node(SMALLINIT,
+                                        new_node(EQDEF, $3, NIL), $6);  }
+              | TOK_NEXT TOK_LP var_id TOK_RP TOK_EQDEF next_expression TOK_SEMI {  $$ = new_node(NEXT,
+                                        new_node(EQDEF, $3, NIL), $6);  }
               ;
 
 _ctlspec      : ctl_expression optsemi {  $$ = $1;   }
