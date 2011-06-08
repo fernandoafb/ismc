@@ -9,6 +9,7 @@
 
 void init_bdd();
 void eval(node_ptr);
+void eval_assign(node_ptr);
 typed_bdd eval_bdd(node_ptr);
 void instantiate_vars(node_ptr);
 

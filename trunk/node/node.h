@@ -11,6 +11,9 @@ typedef union {
 typedef struct node{
   struct node *link;
   short int type,lineno;
+  /**
+   * No caso de representar um inteiro, aponta para o LSB
+   */
   short int bdd_ith;
   value left,right;
 } node_rec,*node_ptr;

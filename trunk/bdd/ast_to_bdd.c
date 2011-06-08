@@ -9,6 +9,14 @@
 
 int next_varnum;
 
+typed_bdd result;
+
+bdd invariant_relation;
+bdd transition_relation;
+
+#define INT_DOMAIN 4
+#define INT_BIT_SIZE 2
+
 int semantic_test(node_ptr n)
 {
 	int ltype = (bdd) eval_bdd((node_ptr)n->left.nodetype).type;
@@ -80,11 +88,17 @@ void instantiate_vars(node_ptr l) {
     	node_ptr n = car(l);
 		if(n->type == COLON){
 	    	node_ptr atom = car(n);
+	    	//node_ptr atomType = cdr(n);
+	    	//TODO: tratar o tipo do atom
+	    	/**
+	    	 * Se for um inteiro separar mais de uma variável
+	    	 */
 	    	if(atom->type == ATOM){
 	    		char *varname = ((string_ptr)atom->left.strtype)->text;
 	    		printf("::instantiate_vars::Atom founded! %s\n", varname);
 	    		set_bdd_ith(atom, next_varnum);
-	    		next_varnum++;
+	    		//para cada variável booleana armazena duas posições
+	    		next_varnum+=2;
 	    	}
 		}else
 			printf("::instantiate_vars::Error: %d!\n", l->type);
@@ -102,21 +116,24 @@ void eval_reverse(node_ptr l){
 			case VAR:
 				vlength = list_length(e);
 				printf("VAR [%d]\n",vlength);
-				bdd_init(1000, 100);
-				bdd_setvarnum(vlength);
 				next_varnum = 0;
 				instantiate_vars(e);
+				bdd_init(1000, 100);
+				//já leva em consideração as variáveis linhas, ver instantiate_vars
+				bdd_setvarnum(next_varnum);
 				break;
 
 			case ASSIGN:
 				printf("ASSIGN\n");
-					typed_bdd result;
-                    result = eval_bdd(e);
-                    if (PRINT_BDD) {
-                    	if (result.bdd) {
-                    		bdd_printdot((bdd)result.bdd);
-                        }
-                    }
+				eval_assign(e);
+				if (PRINT_BDD) {
+					if (invariant_relation) {
+						bdd_printdot(invariant_relation);
+					}
+					if (transition_relation) {
+						bdd_printdot(transition_relation);
+					}
+				}
 				break;
 
 			case SPEC:
@@ -134,6 +151,33 @@ void eval(node_ptr n) {
     	eval_reverse(cdr(n));
     	bdd_done();
     }
+}
+
+void eval_assign(node_ptr n){
+	symbol_representation(n->type);
+	switch (n->type) {
+		case AND:
+			eval_assign(car(n));
+			eval_assign(cdr(n));
+			break;
+
+		case SMALLINIT:
+//			if(invariant_relation)
+//				invariant_relation = bdd_and(invariant_relation, (bdd)(eval_bdd(car(n)).bdd));
+//			else
+				invariant_relation = (bdd)(eval_bdd(car(n)).bdd);
+			break;
+//
+//		case NEXT:
+//			if(transition_relation)
+//				transition_relation = bdd_and(transition_relation, (bdd)eval_bdd(car(n)).bdd);
+//			else
+				transition_relation = (bdd)eval_bdd(car(n)).bdd;
+			break;
+
+		default:
+			break;
+	}
 }
 
 typed_bdd bdd_equals(node_ptr n)
@@ -173,7 +217,6 @@ typed_bdd bdd_equals(node_ptr n)
 }
 
 typed_bdd eval_bdd(node_ptr n) {
-
     if (!n) return new_bdd(bddtrue);
 
     switch (n->type) {
@@ -184,15 +227,6 @@ typed_bdd eval_bdd(node_ptr n) {
 //			eval_bdd((node_ptr)n->right.nodetype); // exp
 //			return 0;
 //		}
-        case SMALLINIT:
-		{
-			// um init é como se fosse um eqdef
-			// soh q com uma validação pra ocorrer somente uma vez
-			// é só isso pq o nodo a esquerda é o valor a ser inicializado
-			// a atribuição acontece no nodo pai q eh um eqdef
-			return eval_bdd((node_ptr)n->left.nodetype);
-		}
-        //case NEXT: return 0;
         //case ATOM:
         //{
             //string name = n->value.strtype;
@@ -200,13 +234,6 @@ typed_bdd eval_bdd(node_ptr n) {
             //return bdd_ithvar(varNum);
 //        	/return 0;
         //}
-        case AND:
-		{
-			bdd l = (bdd) eval_bdd((node_ptr)n->left.nodetype).bdd;
-			bdd r = (bdd) eval_bdd((node_ptr)n->right.nodetype).bdd;
-			bdd l_and_r = bdd_and(l,r);
-			return new_bdd(l_and_r);
-		}
         case OR:
 		{
 			bdd l = (bdd) eval_bdd((node_ptr)n->left.nodetype).bdd;

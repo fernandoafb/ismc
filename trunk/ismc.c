@@ -2,6 +2,7 @@
 #include <stdio.h>
 
 #include "node/node.h"
+#include "node/string.h"
 #include "parser/grammar.h"
 
 #include "bdd/ast_to_bdd.h"

@@ -813,6 +813,18 @@ void symbol_representation(enum NUSMV_CORE_SYMBOLS type){
 		case COLON:
 			printf("::symbol_representation::COLON\n");
 			break;
+		case AND:
+			printf("::symbol_representation::AND\n");
+			break;
+		case SMALLINIT:
+			printf("::symbol_representation::SMALLINIT\n");
+			break;
+		case NEXT:
+			printf("::symbol_representation::NEXT\n");
+			break;
+		case EQDEF:
+			printf("::symbol_representation::EQDEF\n");
+			break;
 		default:
 			printf("::symbol_representation::Error: symbol not found\n");
 			break;
