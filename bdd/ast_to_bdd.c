@@ -14,9 +14,6 @@ typed_bdd result;
 bdd invariant_relation;
 bdd transition_relation;
 
-#define INT_DOMAIN 4
-#define INT_BIT_SIZE 2
-
 int semantic_test(node_ptr n)
 {
 	int ltype = (bdd) eval_bdd((node_ptr)n->left.nodetype).type;
