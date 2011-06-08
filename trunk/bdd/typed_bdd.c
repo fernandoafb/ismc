@@ -40,6 +40,14 @@ int i;
     return temp;
 }
 
+typed_bdd new_ibdd_()
+{
+    typed_bdd temp;
+    temp.type = TIPO_IBDD;
+    temp.ibdd = (bdd **)malloc(NUM_BITS_ISMC * sizeof(bdd *));
+    return temp;
+}
+
 int ibdd_to_int(b)
 bdd** b;
 {
@@ -54,3 +62,39 @@ bdd** b;
 	}
 	return i;
 }
+
+typed_bdd typed_bdd_biimp(typed_bdd a, typed_bdd b) {
+    typed_bdd result;
+
+    if (a.type == TIPO_BDD && b.type == TIPO_BDD) {
+        result = new_bdd(bdd_biimp((bdd)a.bdd, (bdd)b.bdd));
+    } else if (a.type == TIPO_IBDD && b.type == TIPO_IBDD) {
+        int i = 0;
+        result = new_ibdd_();
+        
+        for (i = 0; i < NUM_BITS_ISMC; i++) {
+            result.ibdd[i] = (bdd *)bdd_biimp((bdd)a.ibdd[i], (bdd)b.ibdd[i]);
+        }
+    }
+
+    return result;
+}
+
+typed_bdd typed_bdd_and(typed_bdd a, typed_bdd b) {
+    typed_bdd result;
+
+    if (a.type == TIPO_BDD && b.type == TIPO_BDD) {
+        result = new_bdd(bdd_and((bdd)a.bdd, (bdd)b.bdd));
+    } else if (a.type == TIPO_IBDD && b.type == TIPO_IBDD) {
+        int i = 0;
+        result = new_ibdd_();
+        
+        for (i = 0; i < NUM_BITS_ISMC; i++) {
+            result.ibdd[i] = (bdd *)bdd_and((bdd)a.ibdd[i], (bdd)b.ibdd[i]);
+        }
+    }
+
+    return result;
+}
+
+
