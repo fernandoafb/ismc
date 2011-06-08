@@ -14,7 +14,7 @@ bdd b;
 bdd** int_to_ibdd(i)
 int i;
 {
-    bdd** b = (bdd**) malloc(NUM_BITS_ISMC);
+    bdd** b = (bdd**) malloc(NUM_BITS_ISMC * sizeof(bdd*));
     int div = i;
     int res = 0;
     int j = 0;
