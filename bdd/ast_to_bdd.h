@@ -13,5 +13,7 @@ typed_bdd eval_bdd(node_ptr);
 void instantiate_vars(node_ptr);
 
 typed_bdd bdd_equals(node_ptr);
+int semantic_test(node_ptr);
+int handle_bounds(int);
 
 #endif

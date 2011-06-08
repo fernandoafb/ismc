@@ -1,5 +1,4 @@
 #include "typed_bdd.h"
-#include "math.h"
 #include "stdlib.h"
 #include "../libs/buddy-2.4/src/bdd.h"
 
@@ -12,14 +11,14 @@ bdd b;
     return temp;
 }
 
-bdd** int_to_bdd(i)
+bdd** int_to_ibdd(i)
 int i;
 {
-    bdd** b = (bdd**) malloc(numero_bits);
+    bdd** b = (bdd**) malloc(NUM_BITS_ISMC);
     int div = i;
     int res = 0;
     int j = 0;
-    while (j < numero_bits)
+    while (j < NUM_BITS_ISMC)
     {
     	res = div % 2;
     	div = div / 2;
@@ -33,20 +32,20 @@ typed_bdd new_ibdd(i)
 int i;
 {
     typed_bdd temp;
-    temp.type = TIPO_INTEIRO;
+    temp.type = TIPO_IBDD;
     int maxInt = pow(2,i) - 1;
     // caso seja maior que o limite para inteiros
     if (i > maxInt) i = maxInt;
-    temp.ibdd = (bdd**) int_to_bdd(i);
+    temp.ibdd = (bdd**) int_to_ibdd(i);
     return temp;
 }
 
-int bdd_to_int(b)
+int ibdd_to_int(b)
 bdd** b;
 {
 	int i = 0;
 	int j = 0;
-	while (j < numero_bits)
+	while (j < NUM_BITS_ISMC)
 	{
 		if (**(b+j) == bddtrue)
 		{

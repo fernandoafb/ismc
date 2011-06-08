@@ -2,10 +2,12 @@
 #define TYPED_BDD_H
 
 #include "../libs/buddy-2.4/src/bdd.h"
+#include "math.h"
 
-#define TIPO_INTEIRO 1
+#define TIPO_IBDD 1
 #define TIPO_BDD 2
-#define numero_bits 2
+#define NUM_BITS_ISMC 2
+#define MAX_INT_ISMC pow(2,NUM_BITS_ISMC)-1
 
 typedef struct typed_bdd {
   short int type; // pode ser inteiro (TIPO_INTEIRO) ou bdd (TIPO_BDD)
@@ -14,7 +16,7 @@ typedef struct typed_bdd {
 } typed_bdd;
 
 typed_bdd new_bdd(), new_ibdd();
-bdd** int_to_bdd();
-int bdd_to_int();
+bdd** int_to_ibdd();
+int ibdd_to_int();
 
 #endif
