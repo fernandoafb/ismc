@@ -111,10 +111,8 @@ case_element_list_expr
              | case_element_expr case_element_list_expr {  $$ = new_node(CASE, $1, $2);   }
              ;
 
-/* sem nada, não sei onde está esse build_case_colon_node */
-
 case_element_expr
-             : basic_expr TOK_COLON basic_expr TOK_SEMI { /* $$ = build_case_colon_node($1, $3, $2); */ }
+             : basic_expr TOK_COLON basic_expr TOK_SEMI { $$ = new_node(COLON, $1, $3); }
              ;
 
 /* concatenation_expr foi substituida por primary_expr */
