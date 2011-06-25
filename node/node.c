@@ -836,6 +836,7 @@ void dump_tree(node_ptr node){
 
 char * get_symbol_representation(enum NUSMV_CORE_SYMBOLS type){
 	switch (type) {
+        case NUMBER:return "NUMBER";
 		case MODULE:return "MODULE";
 		case VAR:return "VAR";
 		case ASSIGN:return "ASSIGN";
