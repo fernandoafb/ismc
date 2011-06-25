@@ -119,7 +119,9 @@ void eval_reverse(node_ptr l){
 
 			case ASSIGN:
 				printf("ASSIGN\n");
+				printf("::transition_relation::NEXT\n");
 				transition_relation = eval_assign(e,NEXT);
+				printf("::invariant_relation::SMALLINIT\n");
 				invariant_relation = eval_assign(e,SMALLINIT);
 				if (PRINT_BDD) {
 					if (invariant_relation) {
@@ -151,12 +153,28 @@ void eval(node_ptr n) {
 bdd eval_assign(node_ptr n, enum NUSMV_CORE_SYMBOLS type){
 	bdd l, r;
 	typed_bdd b;
-	symbol_representation(n->type);
+	node_ptr ncar, ncdr;
+	printf("::eval_assign::node");
+	print_symbol_representation(n->type);
+
 	switch (n->type) {
 		case AND:
-			l = eval_assign(car(n), type);
-			r = eval_assign(cdr(n), type);
-			return bdd_and(l,r);
+			ncar = car(n);
+			ncdr = cdr(n);
+			if(ncar->type == type){
+				printf("::eval_assign::Equal type");
+				print_symbol_representation(ncar->type);
+				l = eval_assign(ncar, type);
+				if(ncdr != NIL){
+					r = eval_assign(ncdr, type);
+					return bdd_and(l,r);
+				}else
+					return l;
+			}else{
+				printf("::eval_assign::Diferent type");
+				print_symbol_representation(ncar->type);
+				return eval_assign(cdr(n),type);
+			}
 
 		case SMALLINIT:
 			//car(n) é um EQDEF
@@ -169,8 +187,8 @@ bdd eval_assign(node_ptr n, enum NUSMV_CORE_SYMBOLS type){
 		case NEXT:
 			//car(n) é um EQDEF
 			//car(car(n)) é um ATOM
-			//o bdd_ith é incrementado para pegar a variavel linha
-			l = bdd_ithvar(get_bdd_ith(car(car(n)))+1);
+			//pegar a variavel linha
+			l = bdd_ithvar(get_bdd_ith_line(car(car(n))));
 			b = eval_bdd(cdr(n));
 			r = (b.type == TIPO_BDD ? (bdd)b.bdd : (bdd)b.ibdd);
 			return bdd_biimp(l,r);
@@ -223,6 +241,9 @@ typed_bdd bdd_equals(node_ptr n)
 
 typed_bdd eval_bdd(node_ptr n) {
     if (!n) return new_bdd(bddtrue);
+
+    printf("::eval_bdd::node");
+    print_symbol_representation(n->type);
 
     switch (n->type) {
         case EQDEF:
@@ -378,5 +399,8 @@ typed_bdd eval_bdd(node_ptr n) {
             bdd h = (bdd) eval_bdd(n->right.nodetype).bdd;
             return new_bdd(bdd_ite(f, g, h));
 		}
+        default:
+			printf("::eval_bdd::ERROR: Invalid node on AST!");
+        	exit(EXIT_FAILURE);
     }
 }

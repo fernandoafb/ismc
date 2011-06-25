@@ -31,8 +31,11 @@ void free_list();
 node_ptr cons(),car(),cdr(),append(),reverse(),list_minus();
 node_ptr unify_node();
 void dump_tree();
-void symbol_representation();
+void ast_to_dot();
+void print_symbol_representation();
+char * get_symbol_representation();
 short int get_bdd_ith();
+short int get_bdd_ith_line();
 short int set_bdd_ith(node_ptr, short int);
 #define NIL ((node_ptr)0)
 #define FAILURE_NODE ((node_ptr)(-1))

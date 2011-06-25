@@ -21,6 +21,7 @@
 #include "hash.h"
 #include "assoc.h"
 #include "init.h"
+#include "string.h"
 #include "../parser/symbols.h"
 
 extern int option_print_node_length;
@@ -781,9 +782,49 @@ node_ptr n1,n2;
   return(match1(n1,n2));
 }
 
+void ast_to_dot1(node_ptr node){
+	if(node != NIL){
+		char *father_rep = get_symbol_representation(node->type);
+		if(node->type == ATOM){
+			printf("%s_%p -> %s_%p;\n", (father_rep != 0L ? father_rep: "NOT_FOUND"), node,
+					((string_ptr)node->left.strtype)->text, node);
+		}else if(node->type == NUMBER){
+			printf("%s_%p -> N%d_%p;\n", (father_rep != 0L ? father_rep: "NOT_FOUND"), node,
+					node->left.inttype, node);
+		}else{
+			if(car(node) != NIL){
+				char *son_rep = get_symbol_representation(car(node)->type);
+				printf("%s_%p -> %s_%p;\n", (father_rep != 0L ? father_rep: "NOT_FOUND"), node,
+						(son_rep != 0L ? son_rep: "NOT_FOUND"), car(node));
+				ast_to_dot1(car(node));
+			}
+			if(cdr(node) != NIL){
+				char *son_rep = get_symbol_representation(cdr(node)->type);
+				printf("%s_%p -> %s_%p;\n", (father_rep != 0L ? father_rep: "NOT_FOUND"), node,
+						(son_rep != 0L ? son_rep: "NOT_FOUND"), cdr(node));
+				ast_to_dot1(cdr(node));
+			}
+		}
+	}
+}
+
+void ast_to_dot(node_ptr node){
+	printf("\n---------------DOT Representation of AST----------------\n");
+	printf("digraph graphname {\n");
+	ast_to_dot1(node);
+	printf("}\n");
+	printf("-----------END of DOT Representation of AST-------------\n\n");
+}
+
 void dump_tree1(node_ptr node, node_ptr pai){
 	if(node != NIL && node->type != ATOM && node->type != NUMBER){
-		printf("[%p -> %p,%d,%d]\n", pai, node, node->type, node->lineno);
+		printf("[%p -> %p,%d,%d] \n", pai, node, node->type, node->lineno);
+		if(pai != NIL){
+			printf("PAI");
+			print_symbol_representation(pai->type);
+		}
+		printf("FILHO");
+		print_symbol_representation(node->type);
 		dump_tree1(node->left.nodetype, node);
 		dump_tree1(node->right.nodetype, node);
 	}
@@ -793,42 +834,44 @@ void dump_tree(node_ptr node){
 	dump_tree1(node, NIL);
 }
 
-void symbol_representation(enum NUSMV_CORE_SYMBOLS type){
+char * get_symbol_representation(enum NUSMV_CORE_SYMBOLS type){
 	switch (type) {
-		case MODULE:
-			printf("::symbol_representation::MODULE\n");
-			break;
-		case VAR:
-			printf("::symbol_representation::VAR\n");
-			break;
-		case ASSIGN:
-			printf("::symbol_representation::ASSIGN\n");
-			break;
-		case SPEC:
-			printf("::symbol_representation::SPEC\n");
-			break;
-		case ATOM:
-			printf("::symbol_representation::ATOM\n");
-			break;
-		case COLON:
-			printf("::symbol_representation::COLON\n");
-			break;
-		case AND:
-			printf("::symbol_representation::AND\n");
-			break;
-		case SMALLINIT:
-			printf("::symbol_representation::SMALLINIT\n");
-			break;
-		case NEXT:
-			printf("::symbol_representation::NEXT\n");
-			break;
-		case EQDEF:
-			printf("::symbol_representation::EQDEF\n");
-			break;
-		default:
-			printf("::symbol_representation::Error: symbol not found\n");
-			break;
+		case MODULE:return "MODULE";
+		case VAR:return "VAR";
+		case ASSIGN:return "ASSIGN";
+		case SPEC:return "SPEC";
+		case ATOM:return "ATOM";
+		case COLON:return "COLON";
+		case AND:return "AND";
+		case SMALLINIT:return "SMALLINIT";
+		case NEXT:return "NEXT";
+		case EQDEF:return "EQDEF";
+		case CASE:return "CASE";
+		case ESAC:return "ESAC";
+		case OR:return "OR";
+		case XOR:return "XOR";
+		case XNOR:return "XNOR";
+		case NOT:return "NOT";
+		case PLUS:return "PLUS";
+		case MINUS:return "MINUS";
+		case TIMES:return "TIMES";
+		case DIVIDE:return "DIVIDE";
+		case UMINUS:return "UMINUS";
+		case EQUAL:return "EQUAL";
+		case LIST:return "LIST";
+		case AG:return "AG";
+		case AF:return "AF";
+		case IMPLIES:return "IMPLIES";
+		default: return 0L;
 	}
+}
+
+void print_symbol_representation(enum NUSMV_CORE_SYMBOLS type){
+	char * representation = get_symbol_representation(type);
+	if(representation != 0L)
+		printf("::symbol_representation::%s\n",representation);
+	else
+		printf("::symbol_representation::Error: symbol not found::%d\n", type);
 
 }
 
@@ -839,6 +882,18 @@ void symbol_representation(enum NUSMV_CORE_SYMBOLS type){
 short int get_bdd_ith(node_ptr n){
 	if(n->type == ATOM){
 		return n->bdd_ith;
+	}else
+		return -1;
+}
+
+/**
+ * @return -1 caso o nó não seja ATOM ou o valor do ith
+ * Pega o valor da variável linha
+ */
+short int get_bdd_ith_line(node_ptr n){
+	if(n->type == ATOM){
+		//FIXME: tratar quando a variável for inteira
+		return n->bdd_ith+1;
 	}else
 		return -1;
 }
