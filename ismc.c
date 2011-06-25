@@ -25,6 +25,7 @@ int main(int argc, char *argv[]) {
     yyparse();
     printf("---------------Parser end------------------\n");
     dump_tree(parse_tree);
+    ast_to_dot(parse_tree);
     eval(parse_tree);
     //bdd_printall();
     return EXIT_SUCCESS;

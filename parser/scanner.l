@@ -9,6 +9,8 @@
 %option yylineno
 %option outfile="scanner.c" header-file="scanner.h"
 %option noreject
+%option nounput
+%option noinput
 %option always-interactive
 
 /* ---------------------------end definitions--------------------------------- */
