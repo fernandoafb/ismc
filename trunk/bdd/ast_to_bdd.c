@@ -16,8 +16,8 @@ bdd transition_relation;
 
 int semantic_test(node_ptr n)
 {
-	int ltype = (bdd) eval_bdd((node_ptr)n->left.nodetype).type;
-	int rtype = (bdd) eval_bdd((node_ptr)n->right.nodetype).type;
+	int ltype = (bdd) eval_bdd((node_ptr)car(n)).type;
+	int rtype = (bdd) eval_bdd((node_ptr)cdr(n)).type;
 	return (ltype == rtype && ltype == TIPO_IBDD);
 }
 
@@ -28,8 +28,8 @@ typed_bdd result_bdd(int result)
 
 typed_bdd math_expr(node_ptr n, int op)
 {
-	bdd** l = (bdd**) eval_bdd((node_ptr)n->left.nodetype).ibdd;
-	bdd** r = (bdd**) eval_bdd((node_ptr)n->right.nodetype).ibdd;
+	bdd** l = (bdd**) eval_bdd((node_ptr)car(n)).ibdd;
+	bdd** r = (bdd**) eval_bdd((node_ptr)cdr(n)).ibdd;
 	int lval = ibdd_to_int(l);
 	int rval = ibdd_to_int(r);
 	int result;
@@ -205,21 +205,21 @@ bdd eval_assign(node_ptr n, enum NUSMV_CORE_SYMBOLS type){
 
 typed_bdd bdd_equals(node_ptr n)
 {
-	int ltype = (bdd) eval_bdd((node_ptr)n->left.nodetype).type;
-	int rtype = (bdd) eval_bdd((node_ptr)n->right.nodetype).type;
+	int ltype = (bdd) eval_bdd((node_ptr)car(n)).type;
+	int rtype = (bdd) eval_bdd((node_ptr)cdr(n)).type;
 	if (ltype == rtype)
 	{
 		if (ltype == TIPO_BDD)
 		{
-			bdd l = (bdd) eval_bdd((node_ptr)n->left.nodetype).bdd;
-			bdd r = (bdd) eval_bdd((node_ptr)n->right.nodetype).bdd;
+			bdd l = (bdd) eval_bdd((node_ptr)car(n)).bdd;
+			bdd r = (bdd) eval_bdd((node_ptr)cdr(n)).bdd;
 			bdd l_equal_r = bdd_apply(l,r,bddop_biimp);
 			return new_bdd(l_equal_r);
 		}
 		else
 		{
-			bdd** l = (bdd**) eval_bdd((node_ptr)n->left.nodetype).ibdd;
-			bdd** r = (bdd**) eval_bdd((node_ptr)n->right.nodetype).ibdd;
+			bdd** l = (bdd**) eval_bdd((node_ptr)car(n)).ibdd;
+			bdd** r = (bdd**) eval_bdd((node_ptr)cdr(n)).ibdd;
 			int i = 0;
 			int igual = 1;
 			for ( ; i < NUM_BITS_ISMC && igual; i++)
@@ -248,12 +248,12 @@ typed_bdd eval_bdd(node_ptr n) {
     switch (n->type) {
         case EQDEF:
 		{
-			typed_bdd ltyped = eval_bdd((node_ptr)n->left.nodetype);
+			typed_bdd ltyped = eval_bdd((node_ptr)car(n));
 			bdd l = (bdd) ltyped.bdd;
-			node_ptr rnode = (node_ptr)n->right.nodetype;
+			node_ptr rnode = (node_ptr)cdr(n);
 			if (rnode != NIL)
 			{
-				bdd r = (bdd) eval_bdd((node_ptr)n->right.nodetype).bdd;
+				bdd r = (bdd) eval_bdd((node_ptr)cdr(n)).bdd;
 				bdd l_eqdef_r = bdd_apply(l,r,bddop_biimp);
 				return new_bdd(l_eqdef_r);
 			}
@@ -270,44 +270,44 @@ typed_bdd eval_bdd(node_ptr n) {
         }
         case AND:
         {
-			bdd l = (bdd) eval_bdd((node_ptr)n->left.nodetype).bdd;
-			bdd r = (bdd) eval_bdd((node_ptr)n->right.nodetype).bdd;
+			bdd l = (bdd) eval_bdd((node_ptr)car(n)).bdd;
+			bdd r = (bdd) eval_bdd((node_ptr)cdr(n)).bdd;
 			bdd l_and_r = bdd_and(l,r);
 			return new_bdd(l_and_r);
         }
         case OR:
 		{
-			bdd l = (bdd) eval_bdd((node_ptr)n->left.nodetype).bdd;
-			bdd r = (bdd) eval_bdd((node_ptr)n->right.nodetype).bdd;
+			bdd l = (bdd) eval_bdd((node_ptr)car(n)).bdd;
+			bdd r = (bdd) eval_bdd((node_ptr)cdr(n)).bdd;
 			bdd l_or_r = bdd_or(l,r);
 			return new_bdd(l_or_r);
 		}
         case XOR:
 		{
-			bdd l = (bdd) eval_bdd((node_ptr)n->left.nodetype).bdd;
-			bdd r = (bdd) eval_bdd((node_ptr)n->right.nodetype).bdd;
+			bdd l = (bdd) eval_bdd((node_ptr)car(n)).bdd;
+			bdd r = (bdd) eval_bdd((node_ptr)cdr(n)).bdd;
 			bdd l_xor_r = bdd_xor(l,r);
 			return new_bdd(l_xor_r);
 		}
         case NOT:
         {
-        	bdd l = (bdd) eval_bdd((node_ptr)n->left.nodetype).bdd;
+        	bdd l = (bdd) eval_bdd((node_ptr)car(n)).bdd;
         	// not não tem r, porque é unário e r é nulo
         	bdd not_l = bdd_not(l);
         	return new_bdd(not_l);
         }
         case IMPLIES:
 		{
-			bdd l = (bdd) eval_bdd((node_ptr)n->left.nodetype).bdd;
-			bdd r = (bdd) eval_bdd((node_ptr)n->right.nodetype).bdd;
+			bdd l = (bdd) eval_bdd((node_ptr)car(n)).bdd;
+			bdd r = (bdd) eval_bdd((node_ptr)cdr(n)).bdd;
 			bdd l_imp_r = bdd_imp(l,r);
 			return new_bdd(l_imp_r);
 		}
         case IFF:
 		{
 			// igualdade, equivalence, bi-implicação
-			bdd l = (bdd) eval_bdd((node_ptr)n->left.nodetype).bdd;
-			bdd r = (bdd) eval_bdd((node_ptr)n->right.nodetype).bdd;
+			bdd l = (bdd) eval_bdd((node_ptr)car(n)).bdd;
+			bdd r = (bdd) eval_bdd((node_ptr)cdr(n)).bdd;
 			bdd l_biimp_r = bdd_biimp(l,r);
 			return new_bdd(l_biimp_r);
 		}
@@ -394,9 +394,9 @@ typed_bdd eval_bdd(node_ptr n) {
         case FALSEEXP: return new_bdd(bddfalse);
         case CASE:
 		{
-            bdd f = (bdd) eval_bdd(n->left.nodetype->left.nodetype).bdd;
-            bdd g = (bdd) eval_bdd(n->left.nodetype->right.nodetype).bdd;
-            bdd h = (bdd) eval_bdd(n->right.nodetype).bdd;
+            bdd f = (bdd) eval_bdd(car(car(n))).bdd;
+            bdd g = (bdd) eval_bdd(cdr(car(n))).bdd;
+            bdd h = (bdd) eval_bdd(cdr(n)).bdd;
             return new_bdd(bdd_ite(f, g, h));
 		}
         default:
