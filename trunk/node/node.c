@@ -837,6 +837,9 @@ void dump_tree(node_ptr node){
 char * get_symbol_representation(enum NUSMV_CORE_SYMBOLS type){
 	switch (type) {
         case NUMBER:return "NUMBER";
+        case SCALAR:return "SCALAR";
+        case BOOLEAN:return "BOOLEAN";
+        case TWODOTS:return "TWODOTS";
 		case MODULE:return "MODULE";
 		case VAR:return "VAR";
 		case ASSIGN:return "ASSIGN";
@@ -852,17 +855,27 @@ char * get_symbol_representation(enum NUSMV_CORE_SYMBOLS type){
 		case OR:return "OR";
 		case XOR:return "XOR";
 		case XNOR:return "XNOR";
+		case IFF:return "IFF";
 		case NOT:return "NOT";
 		case PLUS:return "PLUS";
 		case MINUS:return "MINUS";
 		case TIMES:return "TIMES";
 		case DIVIDE:return "DIVIDE";
+		case MOD:return "MOD";
 		case UMINUS:return "UMINUS";
 		case EQUAL:return "EQUAL";
+		case NOTEQUAL:return "NOTEQUAL";
 		case LIST:return "LIST";
 		case AG:return "AG";
 		case AF:return "AF";
 		case IMPLIES:return "IMPLIES";
+		case LSHIFT:return "LSHIFT";
+		case RSHIFT:return "RSHIFT";
+		case UNION:return "UNION";
+		case LT:return "LT";
+		case GT:return "GT";
+		case LE:return "LE";
+		case GE:return "GE";
 		default: return 0L;
 	}
 }
