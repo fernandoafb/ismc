@@ -867,7 +867,13 @@ char * get_symbol_representation(enum NUSMV_CORE_SYMBOLS type){
 		case NOTEQUAL:return "NOTEQUAL";
 		case LIST:return "LIST";
 		case AG:return "AG";
+		case EG:return "EG";
 		case AF:return "AF";
+		case EF:return "EF";
+		case AU:return "AU";
+		case EU:return "EU";
+		case AX:return "AX";
+		case EX:return "EX";
 		case IMPLIES:return "IMPLIES";
 		case LSHIFT:return "LSHIFT";
 		case RSHIFT:return "RSHIFT";

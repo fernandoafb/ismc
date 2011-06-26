@@ -19,6 +19,7 @@ typed_bdd new_bdd(), new_ibdd(), new_ibdd_();
 bdd** int_to_ibdd();
 int ibdd_to_int();
 
+typed_bdd typed_bdd_not(typed_bdd);
 typed_bdd typed_bdd_and(typed_bdd, typed_bdd);
 typed_bdd typed_bdd_biimp(typed_bdd, typed_bdd);
 

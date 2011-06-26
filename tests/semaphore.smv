@@ -20,4 +20,5 @@ ASSIGN
       1 : semaphore;
     esac;
 SPEC
-  AG (state = entering -> AF state = critical)
+  AG (state = entering -> AF state = critical);
+  E[state = idle U state = entering] 

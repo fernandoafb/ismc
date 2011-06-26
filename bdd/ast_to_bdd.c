@@ -3,6 +3,7 @@
 #include "../libs/buddy-2.4/src/bvec.h"
 #include "../libs/buddy-2.4/src/bdd.h"
 #include "../node/string.h"
+#include "check.h"
 #include <stdlib.h>
 
 #define PRINT_BDD 1
@@ -100,6 +101,31 @@ void instantiate_vars(node_ptr l) {
     }
 }
 
+typed_bdd eval_property(node_ptr node){
+	switch (node->type) {
+		case AG: return check_AG(eval_property(car(node)));
+		case EG: return check_EG(eval_property(car(node)));
+		case AX: return check_AX(eval_property(car(node)));
+		case EX: return check_EX(eval_property(car(node)));
+		case AF: return check_AF(eval_property(car(node)));
+		case EF: return check_EF(eval_property(car(node)));
+		case AU: return check_AU(eval_property(car(node)), eval_property(cdr(node)));
+		case EU: return check_EU(eval_property(car(node)), eval_property(cdr(node)));
+		case IMPLIES: return typed_bdd_biimp(eval_property(car(node)), eval_property(cdr(node)));
+		default:
+			return eval_bdd(node);
+			break;
+	}
+}
+
+void eval_spec(node_ptr node){
+	if(node->type == LIST){
+		eval_property(car(node));
+		eval_spec(cdr(node));
+	}else
+		eval_property(node);
+}
+
 void eval_reverse(node_ptr l){
 	int vlength;
 	if(l != NIL){
@@ -135,6 +161,7 @@ void eval_reverse(node_ptr l){
 
 			case SPEC:
 				printf("SPEC\n");
+				eval_spec(e);
 				break;
 			default:
 				printf("::eval_reverse::Error: incorrect formation of parse_tree\n");

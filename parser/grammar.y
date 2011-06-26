@@ -276,14 +276,12 @@ one_assign    : var_id TOK_EQDEF simple_expression TOK_SEMI {  $$ = new_node(EQD
                                         new_node(EQDEF, $3, NIL), $6);  }
               ;
 
-_ctlspec      : ctl_expression optsemi {  $$ = $1;   }
+_ctlspec      : ctl_expression {  $$ = $1;   }
+			  |	ctl_expression TOK_SEMI _ctlspec { $$ = new_node(LIST, $1, $3); }
               ;
 
 ctlspec       : TOK_SPEC _ctlspec {  $$ = new_node(SPEC, $2, NIL);  }
               | TOK_SPEC TOK_NAME var_id TOK_EQDEF  _ctlspec {  $$ = new_node(SPEC, $2, NIL);  }
-              ;
-
-optsemi       : | TOK_SEMI {}
               ;
 
 decl_var_id   : TOK_ATOM
