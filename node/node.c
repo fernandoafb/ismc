@@ -817,7 +817,8 @@ void ast_to_dot(node_ptr node){
 }
 
 void dump_tree1(node_ptr node, node_ptr pai){
-	if(node != NIL && node->type != ATOM && node->type != NUMBER){
+	if(node != NIL && node->type != ATOM && node->type != NUMBER &&
+        node->type != FALSEEXP && node->type != TRUEEXP) {
 		printf("[%p -> %p,%d,%d] \n", pai, node, node->type, node->lineno);
 		if(pai != NIL){
 			printf("PAI");
@@ -882,6 +883,8 @@ char * get_symbol_representation(enum NUSMV_CORE_SYMBOLS type){
 		case GT:return "GT";
 		case LE:return "LE";
 		case GE:return "GE";
+		case TRUEEXP:return "TRUEEXP";
+		case FALSEEXP:return "FALSEEXP";
 		default: return 0L;
 	}
 }
