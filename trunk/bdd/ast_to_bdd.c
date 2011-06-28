@@ -111,11 +111,28 @@ typed_bdd eval_property(node_ptr node){
 		case EF: return check_EF(eval_property(car(node)));
 		case AU: return check_AU(eval_property(car(node)), eval_property(cdr(node)));
 		case EU: return check_EU(eval_property(car(node)), eval_property(cdr(node)));
-		case IMPLIES: return typed_bdd_biimp(eval_property(car(node)), eval_property(cdr(node)));
+		case OR: return typed_bdd_or(eval_property(car(node)),eval_property(cdr(node)));
+		case IFF: return typed_bdd_biimp(eval_property(car(node)), eval_property(cdr(node)));
+		case NOT: return typed_bdd_not(eval_property(cdr(node)));
+		case AND: return typed_bdd_and(eval_property(car(node)),eval_property(cdr(node)));
+		case XOR: return eval_xor(node);
+		case XNOR: return typed_bdd_not(eval_xor(node));
+		case IMPLIES: return typed_bdd_imp(eval_property(car(node)), eval_property(cdr(node)));
 		default:
 			return eval_bdd(node);
 			break;
 	}
+}
+
+typed_bdd eval_xor(node_ptr node)
+{
+	// p xor q = not (p and q) and (p or q)
+	typed_bdd p = eval_property(car(node));
+	typed_bdd q = eval_property(cdr(node));
+	typed_bdd p_and_q = typed_bdd_and(p,q);
+	typed_bdd not_p_and_q = typed_bdd_not(p_and_q);
+	typed_bdd p_or_q = typed_bdd_or(p,q);
+	return typed_bdd_and(not_p_and_q,p_or_q);
 }
 
 void eval_spec(node_ptr node){

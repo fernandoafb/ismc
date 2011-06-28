@@ -13,6 +13,7 @@ bdd eval_assign(node_ptr, enum NUSMV_CORE_SYMBOLS);
 typed_bdd eval_bdd(node_ptr);
 void instantiate_vars(node_ptr);
 
+typed_bdd eval_xor(node_ptr);
 typed_bdd bdd_equals(node_ptr);
 int semantic_test(node_ptr);
 int handle_bounds(int);
