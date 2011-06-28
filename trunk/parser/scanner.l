@@ -108,11 +108,11 @@
 "{"                     {yylval.lineno = yylineno; return(TOK_LCB);}
 "}"                     {yylval.lineno = yylineno; return(TOK_RCB);}
 "FALSE"                 {
-                                //yylval.node = new_node(FALSEEXP,Nil,Nil);
+                                yylval.node = new_node(FALSEEXP,NIL,NIL);
                                 return(TOK_FALSEEXP);
                         }
 "TRUE"                  {
-                                //yylval.node = new_node(TRUEEXP,Nil,Nil);
+                                yylval.node = new_node(TRUEEXP,NIL,NIL);
                                 return(TOK_TRUEEXP);
                         }
 "case"                  {yylval.lineno = yylineno; return(TOK_CASE);}

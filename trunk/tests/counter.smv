@@ -3,8 +3,8 @@ VAR
   l : boolean;
   r : boolean;
 ASSIGN
-  init(l) := 0;
-  init(r) := 0;
+  init(l) := FALSE;
+  init(r) := FALSE;
 
   next(l) := (l != r);
   next(r) := !r;
