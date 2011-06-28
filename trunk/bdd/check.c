@@ -19,6 +19,32 @@ int varset_pertence(typed_bdd z, typed_bdd E[])
 	return 0;
 }
 
+/*
+typed_bdd lfp(Tau : PredicateTransformer)
+{
+	typed_bdd Q = new_bdd(bddfalse);
+	typed_bdd Qlinha := Tau(Q);
+	while (Q != Qlinha) {
+		Q = Qlinha;
+		Qlinha = Tau(Qlinha);
+	}
+	return Q;
+}
+*/
+
+/*
+typed_bdd gfp(Tau: PredicateTransformer)
+{
+	typed_bdd Q = new_bdd(bddtrue);
+    typed_bdd Qlinha = Tau(Q);
+	while (Q != Qlinha) {
+		Q = Qlinha;
+		Qlinha = Tau(Qlinha);
+	}
+	return(Q);
+}
+*/
+
 // arcabouço básico... ainda está longe de pronto
 // esse vetor de typed_bdd é placeholder
 typed_bdd rel_prod(typed_bdd f, typed_bdd g, typed_bdd h, typed_bdd E[])
@@ -67,10 +93,23 @@ typed_bdd check_AX(typed_bdd f){
 	typed_bdd ex = check_EX(not_f);
 	return typed_bdd_not(ex);
 }
+extern bdd transition_relation; // relacao de transição entre v e v'
 
 typed_bdd check_EX(typed_bdd f){
 	//TODO: to implement
 	// produto relacional de f(v') e de sua relação de transição N(v,v')
+	// o BuDDy tem essa função, bdd_relprod(a,b,var), que faz o produto relacional
+	bdd var; // proxima atribuição v'
+	if (f.type == TIPO_BDD)
+	{
+		return new_bdd(bdd_relprod((bdd)f.bdd,(bdd)transition_relation,(bdd)&var)); // f, N(v,v')
+	}
+	// tratar inteiros
+	else if (f.type == TIPO_IBDD)
+	{
+		//TODO: implementar ex para inteiros
+		return new_bdd(bddtrue);
+	}
 }
 
 typed_bdd check_AU(typed_bdd f, typed_bdd g){
@@ -83,6 +122,10 @@ typed_bdd check_AU(typed_bdd f, typed_bdd g){
 typed_bdd check_EU(typed_bdd f, typed_bdd g){
 	//TODO: to implement
 	// lfp Z(v) [g(v) OR (f(v) AND check_EX(Z(v)))]
+	typed_bdd lfp;// = lfg(Z);
+	typed_bdd ex = check_EX(lfp);
+	typed_bdd f_and_ex = typed_bdd_and(f,ex);
+	return typed_bdd_or(g,f_and_ex);
 }
 
 typed_bdd check_AG(typed_bdd f){
@@ -95,6 +138,9 @@ typed_bdd check_AG(typed_bdd f){
 typed_bdd check_EG(typed_bdd f){
 	//TODO: to implement
 	// gfp Z(v) [f(v) AND check_EX(Z(v))]
+	typed_bdd gfp;// = gfg(Z);
+	typed_bdd ex = check_EX(gfp);
+	return typed_bdd_and(f,ex);
 }
 
 
