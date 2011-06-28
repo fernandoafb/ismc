@@ -22,6 +22,7 @@ int ibdd_to_int();
 typed_bdd typed_bdd_not(typed_bdd);
 typed_bdd typed_bdd_and(typed_bdd, typed_bdd);
 typed_bdd typed_bdd_biimp(typed_bdd, typed_bdd);
+typed_bdd typed_bdd_imp(typed_bdd, typed_bdd);
 int typed_bdd_equals(typed_bdd, typed_bdd);
 typed_bdd typed_bdd_or(typed_bdd, typed_bdd);
 typed_bdd typed_bdd_ite(typed_bdd, typed_bdd, typed_bdd);

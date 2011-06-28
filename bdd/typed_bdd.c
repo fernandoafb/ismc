@@ -80,6 +80,23 @@ typed_bdd typed_bdd_biimp(typed_bdd a, typed_bdd b) {
     return result;
 }
 
+typed_bdd typed_bdd_imp(typed_bdd a, typed_bdd b) {
+    typed_bdd result;
+
+    if (a.type == TIPO_BDD && b.type == TIPO_BDD) {
+        result = new_bdd(bdd_imp((bdd)a.bdd, (bdd)b.bdd));
+    } else if (a.type == TIPO_IBDD && b.type == TIPO_IBDD) {
+        int i = 0;
+        result = new_ibdd_();
+
+        for (i = 0; i < NUM_BITS_ISMC; i++) {
+            result.ibdd[i] = (bdd *)bdd_imp((bdd)a.ibdd[i], (bdd)b.ibdd[i]);
+        }
+    }
+
+    return result;
+}
+
 typed_bdd typed_bdd_not(typed_bdd a) {
 	typed_bdd result;
 
@@ -133,7 +150,7 @@ typed_bdd typed_bdd_or(typed_bdd a, typed_bdd b) {
 
 int typed_bdd_equals(typed_bdd a, typed_bdd b) {
 	//TODO: to implement
-	 //return (typed_bdd_biimp(a,b) == new_bdd(bddtrue));
+	//return (typed_bdd_biimp(a,b) == new_bdd(bddtrue));
 	return 0;
 }
 
