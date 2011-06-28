@@ -181,6 +181,10 @@ bdd eval_assign(node_ptr n, enum NUSMV_CORE_SYMBOLS type){
 	bdd l, r;
 	typed_bdd b;
 	node_ptr ncar, ncdr;
+
+    // Ver se isso está certo
+    if (!n) return bddtrue;
+
 	printf("::eval_assign::node");
 	print_symbol_representation(n->type);
 
