@@ -6,6 +6,7 @@ typed_bdd compute_fair(){
 }
 
 typed_bdd check_AX(typed_bdd f){
+	//AX f = not EX not f
 	typed_bdd not_f = typed_bdd_not(f);
 	typed_bdd ex = check_EX(not_f);
 	return typed_bdd_not(ex);
@@ -27,6 +28,7 @@ typed_bdd check_EU(typed_bdd f, typed_bdd g){
 }
 
 typed_bdd check_AG(typed_bdd f){
+	// AG f = not EF not f
 	typed_bdd not_f = typed_bdd_not(f);
 	typed_bdd ef = check_EF(not_f);
 	return typed_bdd_not(ef);
@@ -38,12 +40,14 @@ typed_bdd check_EG(typed_bdd f){
 
 
 typed_bdd check_AF(typed_bdd f){
+	// AF f = not EG not f
 	typed_bdd not_f = typed_bdd_not(f);
 	typed_bdd eg = check_EG(not_f);
 	return typed_bdd_not(eg);
 }
 
 typed_bdd check_EF(typed_bdd f){
+	// EF f = E [true U f]
 	typed_bdd typed_true = new_bdd(bddtrue);
 	typed_bdd eu = check_EU(typed_true,f);
 	return eu;
