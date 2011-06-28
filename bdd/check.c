@@ -1,5 +1,61 @@
 #include "check.h"
 
+// implementar cache de resultados
+// esse vetor de typed_bdd é placeholder
+int cached(typed_bdd f, typed_bdd g, typed_bdd E[], typed_bdd h)
+{
+	//TODO: to implement
+	return 0;
+}
+
+void cache_insert(typed_bdd f, typed_bdd g, typed_bdd E[], typed_bdd h)
+{
+	//TODO: to implement
+}
+
+int varset_pertence(typed_bdd z, typed_bdd E[])
+{
+	//TODO: to implement
+	return 0;
+}
+
+// arcabouço básico... ainda está longe de pronto
+// esse vetor de typed_bdd é placeholder
+typed_bdd rel_prod(typed_bdd f, typed_bdd g, typed_bdd h, typed_bdd E[])
+{
+	if (typed_bdd_equals(f,new_bdd(bddfalse)) || typed_bdd_equals(g,new_bdd(bddfalse)))
+	{
+		return new_bdd(bddfalse);
+	}
+	else if (typed_bdd_equals(f,new_bdd(bddtrue)) && typed_bdd_equals(g,new_bdd(bddtrue)))
+	{
+		return new_bdd(bddtrue);
+	}
+	else if (cached(f,g,E,h))
+	{
+		return h;
+	}
+	else
+	{
+		// let x be the top variable of f
+		// let y be the top variable of g
+		// let z be the topmost of x and y
+		typed_bdd z;
+		typed_bdd h0 = rel_prod(f,g,h,E); // nesse f e g, fazer z valer 0
+		typed_bdd h1 = rel_prod(f,g,h,E); // nesse f e g, fazer z valer 1
+		if (varset_pertence(z,E))
+		{
+			h = typed_bdd_or(h0,h1); /* h0 OR h1 */
+		}
+		else
+		{
+			h = typed_bdd_ite(z,h1,h0); /* (z AND h1) OR (not z AND h0) */
+		}
+		cache_insert(f,g,E,h);
+		return h;
+	}
+}
+
 typed_bdd compute_fair(){
 	//fair = EG true
 	return check_EG(new_bdd(bddtrue));
@@ -14,6 +70,7 @@ typed_bdd check_AX(typed_bdd f){
 
 typed_bdd check_EX(typed_bdd f){
 	//TODO: to implement
+	// produto relacional de f(v') e de sua relação de transição N(v,v')
 }
 
 typed_bdd check_AU(typed_bdd f, typed_bdd g){
@@ -25,6 +82,7 @@ typed_bdd check_AU(typed_bdd f, typed_bdd g){
 
 typed_bdd check_EU(typed_bdd f, typed_bdd g){
 	//TODO: to implement
+	// lfp Z(v) [g(v) OR (f(v) AND check_EX(Z(v)))]
 }
 
 typed_bdd check_AG(typed_bdd f){
@@ -36,6 +94,7 @@ typed_bdd check_AG(typed_bdd f){
 
 typed_bdd check_EG(typed_bdd f){
 	//TODO: to implement
+	// gfp Z(v) [f(v) AND check_EX(Z(v))]
 }
 
 
@@ -47,7 +106,7 @@ typed_bdd check_AF(typed_bdd f){
 }
 
 typed_bdd check_EF(typed_bdd f){
-	// EF f = E [true U f]
+	// EF f = E [true U f]s
 	typed_bdd typed_true = new_bdd(bddtrue);
 	typed_bdd eu = check_EU(typed_true,f);
 	return eu;

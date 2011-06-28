@@ -114,4 +114,33 @@ typed_bdd typed_bdd_and(typed_bdd a, typed_bdd b) {
     return result;
 }
 
+typed_bdd typed_bdd_or(typed_bdd a, typed_bdd b) {
+    typed_bdd result;
+
+    if (a.type == TIPO_BDD && b.type == TIPO_BDD) {
+        result = new_bdd(bdd_or((bdd)a.bdd, (bdd)b.bdd));
+    } else if (a.type == TIPO_IBDD && b.type == TIPO_IBDD) {
+        int i = 0;
+        result = new_ibdd_();
+
+        for (i = 0; i < NUM_BITS_ISMC; i++) {
+            result.ibdd[i] = (bdd *)bdd_or((bdd)a.ibdd[i], (bdd)b.ibdd[i]);
+        }
+    }
+
+    return result;
+}
+
+int typed_bdd_equals(typed_bdd a, typed_bdd b) {
+	//TODO: to implement
+	 //return (typed_bdd_biimp(a,b) == new_bdd(bddtrue));
+	return 0;
+}
+
+typed_bdd typed_bdd_ite(typed_bdd a, typed_bdd b, typed_bdd c) {
+	typed_bdd result;
+	//TODO: to implement
+	return result;
+}
+
 
