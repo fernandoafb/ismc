@@ -149,15 +149,38 @@ typed_bdd typed_bdd_or(typed_bdd a, typed_bdd b) {
 }
 
 int typed_bdd_equals(typed_bdd a, typed_bdd b) {
-	//TODO: to implement
-	//return (typed_bdd_biimp(a,b) == new_bdd(bddtrue));
-	return 0;
+    int i = 0;
+    int igual = 1;
+    
+    if (a.type == TIPO_BDD && b.type == TIPO_BDD) {
+        igual = (a.bdd == b.bdd);
+    } else {
+        for ( ; i < NUM_BITS_ISMC && igual; i++)
+        {
+            if ((bdd)a.ibdd[i] != (bdd)b.ibdd[i])
+            {
+                igual = 0;
+            }
+        }
+    }
+
+    return igual;
 }
 
 typed_bdd typed_bdd_ite(typed_bdd a, typed_bdd b, typed_bdd c) {
-	typed_bdd result;
-	//TODO: to implement
-	return result;
-}
+    typed_bdd result;
 
+    if (a.type == TIPO_BDD && b.type == TIPO_BDD && c.type == TIPO_BDD) {
+        result = new_bdd(bdd_ite((bdd)a.bdd, (bdd)b.bdd, (bdd)c.bdd));
+    } else if (a.type == TIPO_IBDD && b.type == TIPO_IBDD && c.type == TIPO_IBDD) {
+        int i = 0;
+        result = new_ibdd_();
+
+        for (i = 0; i < NUM_BITS_ISMC; i++) {
+            result.ibdd[i] = (bdd *)bdd_ite((bdd)a.ibdd[i], (bdd)b.ibdd[i], (bdd)c.ibdd[i]);
+        }
+    }
+
+    return result;
+}
 
