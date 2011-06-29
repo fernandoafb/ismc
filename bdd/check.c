@@ -45,6 +45,34 @@ typed_bdd gfp(Tau: PredicateTransformer)
 }
 */
 
+// Explicitando o transformador de predicados Tau
+// lfp Z(v) [g(v) OR (f(v) AND check_EX(Z(v)))]
+typed_bdd lfp_EfUg(typed_bdd f, typed_bdd g)
+{
+    typed_bdd Q = new_bdd(bddfalse);
+    typed_bdd Qlinha = typed_bdd_or(g, typed_bdd_and(f, check_EX(Q)));
+
+    while (!typed_bdd_equals(Q, Qlinha)) {
+        Q = Qlinha;
+        Qlinha = typed_bdd_or(g, typed_bdd_and(f, check_EX(Qlinha)));
+    }
+    return Q;
+}
+
+// Explicitando o transformador de predicados Tau
+// gfp Z(v) [f(v) AND check_EX(Z(v))]
+typed_bdd gfp_EGf(typed_bdd f)
+{
+    typed_bdd Q = new_bdd(bddtrue);
+    typed_bdd Qlinha = typed_bdd_and(f, check_EX(Q));
+
+    while (!typed_bdd_equals(Q, Qlinha)) {
+        Q = Qlinha;
+        Qlinha = typed_bdd_and(f, check_EX(Qlinha));
+    }
+    return Q;
+}
+
 // arcabouço básico... ainda está longe de pronto
 // esse vetor de typed_bdd é placeholder
 typed_bdd rel_prod(typed_bdd f, typed_bdd g, typed_bdd h, typed_bdd E[])
@@ -122,7 +150,7 @@ typed_bdd check_AU(typed_bdd f, typed_bdd g){
 typed_bdd check_EU(typed_bdd f, typed_bdd g){
 	//TODO: to implement
 	// lfp Z(v) [g(v) OR (f(v) AND check_EX(Z(v)))]
-	typed_bdd lfp;// = lfg(Z);
+	typed_bdd lfp = lfp_EfUg(f, g);
 	typed_bdd ex = check_EX(lfp);
 	typed_bdd f_and_ex = typed_bdd_and(f,ex);
 	return typed_bdd_or(g,f_and_ex);
@@ -138,7 +166,7 @@ typed_bdd check_AG(typed_bdd f){
 typed_bdd check_EG(typed_bdd f){
 	//TODO: to implement
 	// gfp Z(v) [f(v) AND check_EX(Z(v))]
-	typed_bdd gfp;// = gfg(Z);
+	typed_bdd gfp = gfp_EGf(f);
 	typed_bdd ex = check_EX(gfp);
 	return typed_bdd_and(f,ex);
 }
