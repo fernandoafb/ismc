@@ -168,9 +168,11 @@ void eval_reverse(node_ptr l){
 				invariant_relation = eval_assign(e,SMALLINIT);
 				if (PRINT_BDD) {
 					if (invariant_relation) {
-						bdd_printdot(invariant_relation);
+						printf("\nBDD for invariant relation:\n");
+                        bdd_printdot(invariant_relation);
 					}
 					if (transition_relation) {
+						printf("\nBDD for transition relation:\n");
 						bdd_printdot(transition_relation);
 					}
 				}
