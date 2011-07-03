@@ -135,12 +135,26 @@ typed_bdd eval_xor(node_ptr node)
 	return typed_bdd_and(not_p_and_q,p_or_q);
 }
 
-void eval_spec(node_ptr node){
-	if(node->type == LIST){
-		eval_property(car(node));
+void eval_spec(node_ptr node) {
+    typed_bdd result;
+
+	if (node->type == LIST){
+		result = eval_property(car(node));
+        
+        if (typed_bdd_equals(result, new_bdd(bddtrue)))
+            printf("SPEC verdadeira\n");
+        else
+            printf("SPEC falsa\n");
+
 		eval_spec(cdr(node));
-	}else
-		eval_property(node);
+	} else {
+		result = eval_property(node);
+
+        if (typed_bdd_equals(result, new_bdd(bddtrue)))
+            printf("SPEC verdadeira\n");
+        else
+            printf("SPEC falsa\n");
+    }
 }
 
 void eval_reverse(node_ptr l){
