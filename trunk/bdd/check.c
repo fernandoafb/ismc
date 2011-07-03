@@ -127,10 +127,10 @@ typed_bdd check_EX(typed_bdd f){
 	//TODO: to implement
 	// produto relacional de f(v') e de sua relação de transição N(v,v')
 	// o BuDDy tem essa função, bdd_relprod(a,b,var), que faz o produto relacional
-	bdd var; // proxima atribuição v'
+	bdd var = bddtrue; // proxima atribuição v'
 	if (f.type == TIPO_BDD)
 	{
-		return new_bdd(bdd_relprod((bdd)f.bdd,(bdd)transition_relation,(bdd)&var)); // f, N(v,v')
+		return new_bdd(bdd_relprod((bdd)f.bdd,(bdd)transition_relation,(bdd)var)); // f, N(v,v')
 	}
 	// tratar inteiros
 	else if (f.type == TIPO_IBDD)
