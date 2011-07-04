@@ -1,0 +1,30 @@
+MODULE main
+VAR
+  l : boolean;
+  r : boolean;
+ASSIGN
+  init(l) := FALSE;
+  init(r) := FALSE;
+
+  next(l) := (l != r);
+  next(r) := !r;
+SPEC
+  EF (l & r);
+ SPEC
+  EG (l & r);
+SPEC  
+  AF (l & r);
+SPEC  
+  AG (l & r);
+SPEC  
+  AG (l xor r);
+SPEC  
+  AG (l xnor r);  
+SPEC  
+  AG (l -> r);
+SPEC  
+  AG l;
+SPEC  
+  AG (l | r);
+SPEC  
+  AG (l <-> r);  
