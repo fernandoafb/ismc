@@ -1,24 +1,5 @@
 #include "check.h"
 
-// implementar cache de resultados
-// esse vetor de typed_bdd é placeholder
-int cached(typed_bdd f, typed_bdd g, typed_bdd E[], typed_bdd h)
-{
-	//TODO: to implement
-	return 0;
-}
-
-void cache_insert(typed_bdd f, typed_bdd g, typed_bdd E[], typed_bdd h)
-{
-	//TODO: to implement
-}
-
-int varset_pertence(typed_bdd z, typed_bdd E[])
-{
-	//TODO: to implement
-	return 0;
-}
-
 /*
 typed_bdd lfp(Tau : PredicateTransformer)
 {
@@ -71,43 +52,6 @@ typed_bdd gfp_EGf(typed_bdd f)
         Qlinha = typed_bdd_and(f, check_EX(Qlinha));
     }
     return Q;
-}
-
-// arcabouço básico... ainda está longe de pronto
-// esse vetor de typed_bdd é placeholder
-typed_bdd rel_prod(typed_bdd f, typed_bdd g, typed_bdd h, typed_bdd E[])
-{
-	if (typed_bdd_equals(f,new_bdd(bddfalse)) || typed_bdd_equals(g,new_bdd(bddfalse)))
-	{
-		return new_bdd(bddfalse);
-	}
-	else if (typed_bdd_equals(f,new_bdd(bddtrue)) && typed_bdd_equals(g,new_bdd(bddtrue)))
-	{
-		return new_bdd(bddtrue);
-	}
-	else if (cached(f,g,E,h))
-	{
-		return h;
-	}
-	else
-	{
-		// let x be the top variable of f
-		// let y be the top variable of g
-		// let z be the topmost of x and y
-		typed_bdd z;
-		typed_bdd h0 = rel_prod(f,g,h,E); // nesse f e g, fazer z valer 0
-		typed_bdd h1 = rel_prod(f,g,h,E); // nesse f e g, fazer z valer 1
-		if (varset_pertence(z,E))
-		{
-			h = typed_bdd_or(h0,h1); /* h0 OR h1 */
-		}
-		else
-		{
-			h = typed_bdd_ite(z,h1,h0); /* (z AND h1) OR (not z AND h0) */
-		}
-		cache_insert(f,g,E,h);
-		return h;
-	}
 }
 
 typed_bdd compute_fair(){

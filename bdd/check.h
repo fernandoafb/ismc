@@ -5,11 +5,6 @@
 
 #include "typed_bdd.h"
 
-typed_bdd rel_prod(typed_bdd f, typed_bdd g, typed_bdd h, typed_bdd E[]);
-void cache_insert(typed_bdd f, typed_bdd g, typed_bdd E[], typed_bdd h);
-int cached(typed_bdd f, typed_bdd g, typed_bdd E[], typed_bdd h);
-int varset_pertence(typed_bdd z, typed_bdd E[]);
-
 typed_bdd check_AX(typed_bdd f);
 typed_bdd check_EX(typed_bdd f);
 typed_bdd check_AU(typed_bdd f, typed_bdd g);
