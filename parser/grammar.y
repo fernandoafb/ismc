@@ -53,7 +53,7 @@ node_ptr parse_tree;
 %left  <lineno> TOK_LB TOK_DOT TOK_BIT
 %left  <lineno> TOK_UNKNOWN
 
-%type <node> number integer subrange subrangetype
+%type <node> number integer subrange /*subrangetype*/
 %type <node> constant primary_expr case_element_expr case_element_list_expr
 %type <node> multiplicative_expr
 %type <node> additive_expr shift_expr
@@ -86,8 +86,8 @@ integer       : TOK_NUMBER
 subrange      : integer TOK_TWODOTS integer {  $$ = new_node(TWODOTS, $1, $3);  }
               ;
 
-subrangetype  : shift_expr TOK_TWODOTS shift_expr {  $$ = new_node(TWODOTS, $1, $3);  }
-              ;
+/*subrangetype  : shift_expr TOK_TWODOTS shift_expr {  $$ = new_node(TWODOTS, $1, $3);  }
+              ;*/
 
 constant     : TOK_FALSEEXP
              | TOK_TRUEEXP
