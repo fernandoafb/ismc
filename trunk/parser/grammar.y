@@ -276,7 +276,7 @@ one_assign    : var_id TOK_EQDEF simple_expression TOK_SEMI {  $$ = new_node(EQD
                                         new_node(EQDEF, $3, NIL), $6);  }
               ;
 
-_ctlspec      : ctl_expression {  $$ = $1;   }
+_ctlspec      : ctl_expression TOK_SEMI {  $$ = $1;   }
 			  |	ctl_expression TOK_SEMI _ctlspec { $$ = new_node(LIST, $1, $3); }
               ;
 

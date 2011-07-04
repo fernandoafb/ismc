@@ -9,7 +9,14 @@ ASSIGN
   next(l) := (l != r);
   next(r) := !r;
 SPEC
+  EF (l & r);
+  EG (l & r);
   AF (l & r);
   AG (l & r);
-  EF (l & r);
-  EG (l & r)
+  AG (l xor r);
+  AG (l xnor r);  
+  AG (l -> r);
+  AG l;
+  AG (l | r);
+  AG (l <-> r);  
+    
