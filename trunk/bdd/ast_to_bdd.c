@@ -92,6 +92,7 @@ void instantiate_vars(node_ptr l) {
 	    		char *varname = ((string_ptr)atom->left.strtype)->text;
 	    		printf("::instantiate_vars::Atom founded! %s\n", varname);
 	    		set_bdd_ith(atom, next_varnum);
+	    		printf("::instantiate_vars::Atom founded! %s ITH=%d\n", varname, get_bdd_ith(atom));
 	    		//para cada variável booleana armazena duas posições
 	    		next_varnum+=2;
 	    	}
@@ -243,7 +244,7 @@ bdd eval_assign(node_ptr n, enum NUSMV_CORE_SYMBOLS type){
 		case SMALLINIT:
 			//car(n) é um EQDEF
 			//car(car(n)) é um ATOM
-			printf("SMALLINIT: ITH=%d\n", get_bdd_ith(car(car(n))));
+			printf("SMALLINIT: %s=%d\n", ((string_ptr)car(car(n))->left.strtype)->text, get_bdd_ith(car(car(n))));
 			l = bdd_ithvar(get_bdd_ith(car(car(n))));
 			b = eval_bdd(cdr(n));
 			r = (b.type == TIPO_BDD ? (bdd)b.bdd : (bdd)b.ibdd);
