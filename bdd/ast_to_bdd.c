@@ -243,6 +243,7 @@ bdd eval_assign(node_ptr n, enum NUSMV_CORE_SYMBOLS type){
 		case SMALLINIT:
 			//car(n) é um EQDEF
 			//car(car(n)) é um ATOM
+			printf("SMALLINIT: ITH=%d\n", get_bdd_ith(car(car(n))));
 			l = bdd_ithvar(get_bdd_ith(car(car(n))));
 			b = eval_bdd(cdr(n));
 			r = (b.type == TIPO_BDD ? (bdd)b.bdd : (bdd)b.ibdd);
@@ -308,24 +309,16 @@ typed_bdd eval_bdd(node_ptr n) {
 
     printf("::eval_bdd::node");
     print_symbol_representation(n->type);
+	node_ptr r = cdr(n);
+	node_ptr l = car(n);
 
     switch (n->type) {
         case EQDEF:
 		{
-			typed_bdd ltyped = eval_bdd((node_ptr)car(n));
-			bdd l = (bdd) ltyped.bdd;
-			node_ptr rnode = (node_ptr)cdr(n);
-			if (rnode != NIL)
-			{
-				bdd r = (bdd) eval_bdd((node_ptr)cdr(n)).bdd;
-				bdd l_eqdef_r = bdd_apply(l,r,bddop_biimp);
-				return new_bdd(l_eqdef_r);
-			}
+			if (r != NIL)
+				return typed_bdd_biimp(eval_bdd(l), eval_bdd(r));
 			else
-			{
-				return ltyped;
-			}
-
+				return eval_bdd(l);
 		}
         case ATOM:
         {
@@ -334,64 +327,46 @@ typed_bdd eval_bdd(node_ptr n) {
         }
         case AND:
         {
-			bdd l = (bdd) eval_bdd((node_ptr)car(n)).bdd;
-			bdd r = (bdd) eval_bdd((node_ptr)cdr(n)).bdd;
-			bdd l_and_r = bdd_and(l,r);
-			return new_bdd(l_and_r);
+			return typed_bdd_and(eval_bdd(l),eval_bdd(r));
         }
         case OR:
 		{
-			bdd l = (bdd) eval_bdd((node_ptr)car(n)).bdd;
-			bdd r = (bdd) eval_bdd((node_ptr)cdr(n)).bdd;
-			bdd l_or_r = bdd_or(l,r);
-			return new_bdd(l_or_r);
+			return typed_bdd_or(eval_bdd(l),eval_bdd(r));
 		}
         case XOR:
 		{
-			bdd l = (bdd) eval_bdd((node_ptr)car(n)).bdd;
-			bdd r = (bdd) eval_bdd((node_ptr)cdr(n)).bdd;
-			bdd l_xor_r = bdd_xor(l,r);
-			return new_bdd(l_xor_r);
+			return typed_bdd_xor(eval_bdd(l),eval_bdd(r));
 		}
         case XNOR:
         {
-			bdd l = (bdd) eval_bdd((node_ptr)car(n)).bdd;
-			bdd r = (bdd) eval_bdd((node_ptr)cdr(n)).bdd;
-			bdd l_xor_r = bdd_xor(l,r);
-			bdd not_xor = bdd_not(l_xor_r);
-			return new_bdd(not_xor);
+			return typed_bdd_not(typed_bdd_xor(eval_bdd(l),eval_bdd(r)));
         }
         case NOT:
         {
-        	bdd l = (bdd) eval_bdd((node_ptr)car(n)).bdd;
-        	// not não tem r, porque é unário e r é nulo
-        	bdd not_l = bdd_not(l);
-        	return new_bdd(not_l);
+        	return typed_bdd_not(eval_bdd(l));
         }
+
         case IMPLIES:
 		{
-			bdd l = (bdd) eval_bdd((node_ptr)car(n)).bdd;
-			bdd r = (bdd) eval_bdd((node_ptr)cdr(n)).bdd;
-			bdd l_imp_r = bdd_imp(l,r);
-			return new_bdd(l_imp_r);
+			return typed_bdd_imp(eval_bdd(l), eval_bdd(r));
 		}
         case IFF:
 		{
-			// igualdade, equivalence, bi-implicação
-			bdd l = (bdd) eval_bdd((node_ptr)car(n)).bdd;
-			bdd r = (bdd) eval_bdd((node_ptr)cdr(n)).bdd;
-			bdd l_biimp_r = bdd_biimp(l,r);
-			return new_bdd(l_biimp_r);
+			return typed_bdd_biimp(eval_bdd(l), eval_bdd(r));
 		}
         case EQUAL:
         {
-        	return bdd_equals(n);
+        	if(typed_bdd_equals(eval_bdd(l), eval_bdd(r)))
+        		return new_bdd(bdd_true());
+        	else
+        		return new_bdd(bdd_false());
         }
         case NOTEQUAL:
         {
-        	bdd l = (bdd) bdd_equals(n).bdd;
-        	bdd not_l = bdd_not(l);
-        	return new_bdd(not_l);
+        	if(typed_bdd_equals(eval_bdd(l), eval_bdd(r)))
+        		return new_bdd(bdd_false());
+			else
+				return new_bdd(bdd_true());
         }
         case PLUS:
         {
@@ -466,10 +441,7 @@ typed_bdd eval_bdd(node_ptr n) {
         case FALSEEXP: return new_bdd(bddfalse);
         case CASE:
 		{
-            bdd f = (bdd) eval_bdd(car(car(n))).bdd;
-            bdd g = (bdd) eval_bdd(cdr(car(n))).bdd;
-            bdd h = (bdd) eval_bdd(cdr(n)).bdd;
-            return new_bdd(bdd_ite(f, g, h));
+            return typed_bdd_ite(eval_bdd(car(l)), eval_bdd(cdr(l)), eval_bdd(r));
 		}
         default:
 			printf("::eval_bdd::ERROR: Invalid node on AST!");
