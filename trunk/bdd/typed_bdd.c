@@ -148,6 +148,24 @@ typed_bdd typed_bdd_or(typed_bdd a, typed_bdd b) {
     return result;
 }
 
+typed_bdd typed_bdd_xor(typed_bdd a, typed_bdd b) {
+    typed_bdd result;
+
+    if (a.type == TIPO_BDD && b.type == TIPO_BDD) {
+        result = new_bdd(bdd_xor((bdd)a.bdd, (bdd)b.bdd));
+    } else if (a.type == TIPO_IBDD && b.type == TIPO_IBDD) {
+        int i = 0;
+        result = new_ibdd_();
+
+        for (i = 0; i < NUM_BITS_ISMC; i++) {
+            result.ibdd[i] = (bdd *)bdd_xor((bdd)a.ibdd[i], (bdd)b.ibdd[i]);
+        }
+    }
+
+    return result;
+}
+
+
 int typed_bdd_equals(typed_bdd a, typed_bdd b) {
     int i = 0;
     int igual = 1;

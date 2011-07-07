@@ -25,6 +25,7 @@ typed_bdd typed_bdd_biimp(typed_bdd, typed_bdd);
 typed_bdd typed_bdd_imp(typed_bdd, typed_bdd);
 int typed_bdd_equals(typed_bdd, typed_bdd);
 typed_bdd typed_bdd_or(typed_bdd, typed_bdd);
+typed_bdd typed_bdd_xor(typed_bdd a, typed_bdd b);
 typed_bdd typed_bdd_ite(typed_bdd, typed_bdd, typed_bdd);
 
 #endif
