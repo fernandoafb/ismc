@@ -904,7 +904,7 @@ void print_symbol_representation(enum NUSMV_CORE_SYMBOLS type){
  */
 short int get_bdd_ith(node_ptr n){
 	if(n->type == ATOM){
-		return n->bdd_ith;
+		return car(n)->bdd_ith;
 	}else
 		return -1;
 }
@@ -916,7 +916,7 @@ short int get_bdd_ith(node_ptr n){
 short int get_bdd_ith_line(node_ptr n){
 	if(n->type == ATOM){
 		//FIXME: tratar quando a variável for inteira
-		return n->bdd_ith+1;
+		return car(n)->bdd_ith+1;
 	}else
 		return -1;
 }
