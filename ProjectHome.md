@@ -1,0 +1,1 @@
+Este projeto visa a implementação de um Model Cheker simplificado utilizando um subconjunto da linguagem SMV para descrição de modelos e especificação de propriedades.
